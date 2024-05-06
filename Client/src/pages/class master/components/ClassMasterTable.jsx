@@ -20,7 +20,7 @@ const ClassMasterTable = ({ classList, handleTrue }) => {
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg h-[530px] overflow-y-auto">
       <ToastContainer />
       <table class="w-full text-md text-left rtl:text-right text-gray-200 dark:text-gray-200 ">
-        <thead class="text-sm text-gray-200 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-200 sticky top-0">
+        <thead class="text-sm text-gray-200 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-200 sticky top-0">
           <tr>
             <th scope="col" class="px-6 py-3">
               Action{" "}
@@ -47,8 +47,8 @@ const ClassMasterTable = ({ classList, handleTrue }) => {
                 <tr
                   class={
                     i % 2 === 0
-                      ? "bg-black border-b dark:bg-white dark:border-gray-700"
-                      : "bg-black border-b dark:bg-gray-100 dark:border-gray-700"
+                      ? "bg-white border-b dark:bg-white dark:border-gray-700"
+                      : "bg-gray-100 border-b dark:bg-gray-100 dark:border-gray-700"
                   }
                 >
                   <td class="px-6 py-4 flex">
