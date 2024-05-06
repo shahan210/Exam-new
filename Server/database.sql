@@ -1,6 +1,6 @@
 CREATE SCHEMA exam-new
 
-CREATE TABLE Subjects (
+CREATE TABLE subjectsmaster (
     SubjectID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     SubjectName VARCHAR(100),
     QDescription VARCHAR(250),
@@ -24,7 +24,7 @@ CREATE TABLE classmaster (
     ModifiedBy VARCHAR(50),
     IsActive INT 
 );
-CREATE TABLE AdminUserLogins (
+CREATE TABLE adminuserlogins (
     LoginID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     UserName VARCHAR(50) NOT NULL,
     UserPassword VARCHAR(50) NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE AdminUserLogins (
     RightsDetails VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE AdminUserRights (
+CREATE TABLE adminuserrights (
     RightID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     code INT,
     remark VARCHAR(100),
@@ -47,4 +47,20 @@ CREATE TABLE AdminUserRights (
     mdule VARCHAR(50),
     BatchID INT
 );
-
+CREATE TABLE examdefinitiontmst (
+    QuestionTestID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    AcaYear INT,
+    ExamDate DATETIME,
+    ExamName VARCHAR(250),
+    ClassId INT,
+    SubjectID INT,
+    AddedBy VARCHAR(50),
+    AddedDate DATETIME,
+    ModifiedBy VARCHAR(50),
+    ModifiedDate DATETIME,
+    ALTMTHour INT,
+    ALTMTMin INT,
+    ALTMTSec INT,
+    ExamHeading VARCHAR(2000),
+    ExamSubHeading VARCHAR(1500)
+);

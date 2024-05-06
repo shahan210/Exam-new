@@ -3,156 +3,174 @@
 @tailwind utilities;
 
 body {
-    background-color: #f9fafb;
-    font-family: "Roboto", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+  background-color: #f9fafb;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .menu--button {
-    @apply justify-start whitespace-nowrap rounded-md text-sm font-medium  transition-colors focus-visible:outline-none focus-visible:ring-2  disabled:pointer-events-none disabled:opacity-50 hover:bg-white hover:text-black h-10 px-4 py-2 flex items-center w-full;
+  @apply justify-start whitespace-nowrap rounded-md text-sm font-medium  transition-colors focus-visible:outline-none focus-visible:ring-2  disabled:pointer-events-none disabled:opacity-50 hover:bg-white hover:text-black h-10 px-4 py-2 flex items-center w-full;
 }
 .loadingSpinnerContainer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    overflow: hidden;
-    bottom: 0;
-    left: 0;
-    background-color: #000;
-    opacity: 0.2;
-    z-index: 5000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.2;
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .loadingSpinner {
-    width: 64px;
-    height: 64px;
-    border: 8px solid;
-    border-color: rgb(245, 136, 12) transparent rgb(245, 136, 12) transparent;
-    border-radius: 50%;
-    animation: spin 1.2s linear infinite;
+  width: 64px;
+  height: 64px;
+  border: 8px solid;
+  border-color: rgb(245, 136, 12) transparent rgb(245, 136, 12) transparent;
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
 }
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .switch {
-    @apply flex;
+  @apply flex;
 }
 .switch input[type="checkbox"] {
-    @apply h-0 w-0 invisible;
+  @apply h-0 w-0 invisible;
 }
 .switch label {
-    @apply cursor-pointer w-[38px] h-4 bg-[rgb(0,0,0,0.2)] block relative transition-[0.3s] box-content p-1 rounded-[50em];
+  @apply cursor-pointer w-[38px] h-4 bg-[rgb(0,0,0,0.2)] block relative transition-[0.3s] box-content p-1 rounded-[50em];
 }
 .switch label > .slider.round {
-    @apply content-[''] absolute w-4 h-4 bg-white transition-[0.3s] rounded-[50em];
+  @apply content-[''] absolute w-4 h-4 bg-white transition-[0.3s] rounded-[50em];
 }
 .switch input:checked + label {
-    @apply bg-red-500;
+  @apply bg-red-500;
 }
 .switch input:checked + label > .slider.round {
-    @apply translate-x-[calc(100%_+_5px)] text-[black];
+  @apply translate-x-[calc(100%_+_5px)] text-[black];
 }
 .slider.round {
-    @apply w-auto h-auto text-center text-[gray] m-0 p-0;
+  @apply w-auto h-auto text-center text-[gray] m-0 p-0;
 }
 
 .wrapperLoader {
-    width: 200px;
-    height: 60px;
-    position: relative;
-    z-index: 1;
+  width: 200px;
+  height: 60px;
+  position: relative;
+  z-index: 1;
 }
 
 .circleLoader {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    border-radius: 50%;
-    @apply bg-gradient-to-r from-amber-100 via-lime-100 to-emerald-200;
-    left: 15%;
-    transform-origin: 50%;
-    animation: circle7124 0.5s alternate infinite ease;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-radius: 50%;
+  @apply bg-gradient-to-r from-yellow-300 via-green-400 to-cyan-400;
+  left: 15%;
+  transform-origin: 50%;
+  animation: circle7124 0.5s alternate infinite ease;
 }
 
 @keyframes circle7124 {
-    0% {
-        top: 60px;
-        height: 5px;
-        border-radius: 50px 50px 25px 25px;
-        transform: scaleX(1.7);
-    }
+  0% {
+    top: 60px;
+    height: 5px;
+    border-radius: 50px 50px 25px 25px;
+    transform: scaleX(1.7);
+  }
 
-    40% {
-        height: 20px;
-        border-radius: 50%;
-        transform: scaleX(1);
-    }
+  40% {
+    height: 20px;
+    border-radius: 50%;
+    transform: scaleX(1);
+  }
 
-    100% {
-        top: 0%;
-    }
+  100% {
+    top: 0%;
+  }
 }
 
 .circleLoader:nth-child(2) {
-    left: 45%;
-    animation-delay: 0.2s;
+  left: 45%;
+  animation-delay: 0.2s;
 }
 
 .circleLoader:nth-child(3) {
-    left: auto;
-    right: 15%;
-    animation-delay: 0.3s;
+  left: auto;
+  right: 15%;
+  animation-delay: 0.3s;
 }
 
 .shadowLoader {
-    width: 20px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.9);
-    position: absolute;
-    top: 62px;
-    transform-origin: 50%;
-    z-index: -1;
-    left: 15%;
-    filter: blur(1px);
-    animation: shadow046 0.5s alternate infinite ease;
+  width: 20px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  top: 62px;
+  transform-origin: 50%;
+  z-index: -1;
+  left: 15%;
+  filter: blur(1px);
+  animation: shadow046 0.5s alternate infinite ease;
 }
 
 @keyframes shadow046 {
-    0% {
-        transform: scaleX(1.5);
-    }
+  0% {
+    transform: scaleX(1.5);
+  }
 
-    40% {
-        transform: scaleX(1);
-        opacity: 0.7;
-    }
+  40% {
+    transform: scaleX(1);
+    opacity: 0.7;
+  }
 
-    100% {
-        transform: scaleX(0.2);
-        opacity: 0.4;
-    }
+  100% {
+    transform: scaleX(0.2);
+    opacity: 0.4;
+  }
 }
 
 .shadowLoader:nth-child(4) {
-    left: 45%;
-    animation-delay: 0.2s;
+  left: 45%;
+  animation-delay: 0.2s;
 }
 
 .shadowLoader:nth-child(5) {
-    left: auto;
-    right: 15%;
-    animation-delay: 0.3s;
+  left: auto;
+  right: 15%;
+  animation-delay: 0.3s;
 }
 
 .disable-scroll {
-    overflow: hidden;
+  overflow: hidden;
+}
+.tableDiv {
+  @apply relative overflow-x-auto shadow-md sm:rounded-lg max-h-[500px] overflow-y-auto;
+}
+.table {
+  @apply w-full text-sm text-left rtl:text-right text-gray-200 dark:text-gray-200;
+}
+.tableHead {
+  @apply text-sm text-gray-200 uppercase bg-gray-600 dark:bg-gray-800 dark:text-gray-200 sticky top-0;
+}
+.tableBody-1 {
+  @apply bg-white border-b dark:bg-white dark:border-gray-700;
+}
+.tableBody-2 {
+  @apply bg-gray-100 border-b dark:bg-gray-100 dark:border-gray-700;
+}
+.Action-Button {
+  @apply hover:scale-105 cursor-pointer mr-2;
 }
