@@ -17,10 +17,9 @@ const ClassMasterTable = ({ classList, handleTrue }) => {
   };
 
   return (
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg h-[530px] overflow-y-auto">
-      <ToastContainer />
-      <table class="w-full text-md text-left rtl:text-right text-gray-200 dark:text-gray-200 ">
-        <thead class="text-sm text-gray-200 uppercase bg-gray-600 dark:bg-gray-600 dark:text-gray-200 sticky top-0">
+    <div class="tableDiv">
+      <table class="table">
+        <thead class="tableHead">
           <tr>
             <th scope="col" class="px-6 py-3">
               Action{" "}
@@ -44,25 +43,19 @@ const ClassMasterTable = ({ classList, handleTrue }) => {
             classList.length > 0 &&
             classList?.map((subject, i) => {
               return (
-                <tr
-                  class={
-                    i % 2 === 0
-                      ? "bg-white border-b dark:bg-white dark:border-gray-700"
-                      : "bg-gray-100 border-b dark:bg-gray-100 dark:border-gray-700"
-                  }
-                >
+                <tr class={i % 2 === 0 ? "tableBody-1" : "tableBody-2"}>
                   <td class="px-6 py-4 flex">
                     <img
                       onClick={() => handleTrue(subject?.ClassId)}
                       src={EditIcon}
                       alt="edit"
-                      className="hover:scale-105 cursor-pointer mr-2"
+                      className="Action-Button"
                     />
                     <img
                       onClick={() => deleteClass(subject?.ClassId)}
                       src={Trash}
                       alt="edit"
-                      className="hover:scale-105 cursor-pointer mr-2"
+                      className="Action-Button"
                     />
                     {/* <input type="checkbox" /> */}
                   </td>
