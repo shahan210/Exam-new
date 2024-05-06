@@ -1,9 +1,9 @@
 import api from "../post.jsx";
 
-const getClassTable = async () => {
+const getExamList = async () => {
   let userData = [];
   try {
-    const result = await api.get("/class");
+    const result = await api.post("/class");
     console.log(result);
     userData = result?.map((item) => item.JSONData1);
     return userData;
@@ -13,4 +13,4 @@ const getClassTable = async () => {
   }
 };
 
-export default getClassTable;
+export default getExamList;
