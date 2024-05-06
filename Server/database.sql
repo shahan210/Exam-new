@@ -24,3 +24,27 @@ CREATE TABLE classmaster (
     ModifiedBy VARCHAR(50),
     IsActive INT 
 );
+CREATE TABLE AdminUserLogins (
+    LoginID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    UserName VARCHAR(50) NOT NULL,
+    UserPassword VARCHAR(50) NOT NULL,
+    UserType INT,
+    EmailID VARCHAR(50),
+    PhNo VARCHAR(50),
+    UserLocation VARCHAR(50),
+    AddedBy VARCHAR(50),
+    AddedDate vARCHAR(20),
+    ModifiedBy VARCHAR(50),
+    ModifiedDate vARCHAR(20),
+    RightsDetails VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE QB_AdminUserRights (
+    RightID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    code INT,
+    remark VARCHAR(100),
+    id INT,
+    mdule VARCHAR(50),
+    BatchID INT
+);
+

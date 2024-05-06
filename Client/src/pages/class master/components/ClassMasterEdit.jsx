@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
-import ModalComponent from "../../../global/components/Modal";
-import getSubjectCreate from "../../../API/subjectMaster/getSubjectCreate";
-import getSubjectSpecific from "../../../API/subjectMaster/getSubjectSpecific";
 import { useForm } from "react-hook-form";
+import getClassCreate from "../../../API/classMaster/getClassCreate";
+import getClassEdit from "../../../API/classMaster/getClassEdit";
+import getClassSpecific from "../../../API/classMaster/getClassSpecific";
 import { useGlobalContext } from "../../../global/GlobalContext";
-import getSubjectEdit from "../../../API/subjectMaster/getSubjectEdit";
+import ModalComponent from "../../../global/components/Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const SubjectCreate = ({ title, subjectID }) => {
+const ClassMasterEdit = ({ title, classID }) => {
   const [loading, setLoading] = useState(true);
   const { register, handleSubmit, setValue, reset, control } = useForm();
-  const [editSubject, setEditSubject] = useState();
+  const [editClass, setEditClass] = useState();
   const { modalComponent, setModalComponent } = useGlobalContext();
   // create user and add addedd by
   const createSubject = async (data, e) => {
     e.preventDefault();
-
     try {
-      const result = await getSubjectCreate(data);
-      if (result[0][0]?.insertId === undefined) {
+      const result = await getClassCreate(data);
+      console.log(result);
+      if (result[0][0].insertId === undefined) {
         return;
       }
-      setModalComponent(false);
       toast.success("Created Successfully");
+      setModalComponent(false);
     } catch (error) {
       console.log(error);
       toast.error("error");
@@ -32,24 +31,23 @@ const SubjectCreate = ({ title, subjectID }) => {
   const updateSubject = async (data, e) => {
     e.preventDefault();
     try {
-      const result = await getSubjectEdit(data, subjectID);
-      // console.log(result);
+      const result = await getClassEdit(data, classID);
       if (result[0]?.insertId === undefined) {
         return;
       }
-      toast.success("Updated Successfully");
       setModalComponent(false);
+      toast.success("Updated Successfully");
     } catch (error) {
       console.log(error);
       toast.error("error");
     }
   };
-  const getSubject = async () => {
-    if (subjectID !== 0 && loading) {
+  const getClass = async () => {
+    if (classID !== 0 && loading) {
       try {
-        const result = await getSubjectSpecific(subjectID);
-        console.log(result[0]);
-        setEditSubject(result[0]);
+        const result = await getClassSpecific(classID);
+        console.log(result[0], 1);
+        setEditClass(result[0]);
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -57,7 +55,7 @@ const SubjectCreate = ({ title, subjectID }) => {
     }
   };
   useEffect(() => {
-    getSubject();
+    getClass();
     setTimeout(() => {
       setLoading(false);
     }, 300);
@@ -70,13 +68,12 @@ const SubjectCreate = ({ title, subjectID }) => {
   }, [modalComponent, reset]);
 
   useEffect(() => {
-    if (editSubject) {
-      Object.entries(editSubject).forEach(([key, value]) => {
-        console.log(key, value);
+    if (editClass) {
+      Object.entries(editClass).forEach(([key, value]) => {
         setValue(key, value);
       });
     }
-  }, [editSubject, setValue]);
+  }, [editClass, setValue]);
 
   if (loading) {
   } else {
@@ -87,34 +84,28 @@ const SubjectCreate = ({ title, subjectID }) => {
           <div className=" bg-[#EEEEEE] text-black shadow-[rgba(0,0,0,0.24)_0px_3px_8px] rounded p-2 ">
             <div>
               <div className="mb-4 mt-2 md:grid grid-cols-3 justify-center items-center ">
-                <label
-                  htmlFor="SubjectName"
-                  className="flex justify-center mb-1"
-                >
-                  Subject Name{" "}
+                <label htmlFor="CLNAME" className="flex justify-center mb-1">
+                  Class{" "}
                 </label>
                 <input
-                  {...register("SubjectName")}
-                  onChange={(e) => setValue("SubjectName", e.target.value)}
-                  defaultValue={subjectID == 0 ? "" : editSubject?.SubjectName}
-                  id="SubjectName"
+                  {...register("CLNAME")}
+                  onChange={(e) => setValue("CLNAME", e.target.value)}
+                  defaultValue={classID == 0 ? "" : editClass?.CLNAME}
+                  id="CLNAME"
                   type="text"
                   className="w-full col-span-2 md:w-1/2 bg-slate-100 focus:bg-white  p-1 text-black focus:outline-none border-gray-300 focus:shadow-[rgba(0,0,0,0.24)_0px_2px_8px] border-2 rounded-lg "
                   placeholder=""
                 />
               </div>
               <div className="mb-4 mt-2 w-full md:grid grid-cols-3 justify-center items-center ">
-                <label
-                  htmlFor="QDescription"
-                  className="flex justify-center mb-1"
-                >
-                  Description{" "}
+                <label htmlFor="SECNAME" className="flex justify-center mb-1">
+                  Section{" "}
                 </label>
                 <input
-                  {...register("QDescription")}
-                  onChange={(e) => setValue("QDescription", e.target.value)}
-                  defaultValue={subjectID == 0 ? "" : editSubject?.QDescription}
-                  id="QDescription"
+                  {...register("SECNAME")}
+                  onChange={(e) => setValue("SECNAME", e.target.value)}
+                  defaultValue={classID == 0 ? "" : editClass?.SECNAME}
+                  id="SECNAME"
                   type="text"
                   className="w-full col-span-2 md:w-1/2  p-1 bg-slate-100 focus:bg-white text-black focus:outline-none border-gray-300 focus:shadow-[rgba(0,0,0,0.24)_0px_2px_8px] border-2 rounded-lg "
                   placeholder=""
@@ -131,9 +122,9 @@ const SubjectCreate = ({ title, subjectID }) => {
                     type="checkbox"
                     id="switch"
                     defaultChecked={
-                      subjectID == 0
+                      classID == 0
                         ? true
-                        : editSubject?.IsActive == 1
+                        : editClass?.IsActive == 1
                         ? true
                         : false
                     }
@@ -147,13 +138,13 @@ const SubjectCreate = ({ title, subjectID }) => {
             <div className="flex w-full justify-end p-1 ">
               <button
                 onClick={
-                  subjectID == 0
+                  classID == 0
                     ? handleSubmit(createSubject)
                     : handleSubmit(updateSubject)
                 }
                 className="p-2 text-center bg-green-400 text-white rounded w-24  hover:bg-green-500 transition-all ease-in-out duration-100"
               >
-                {subjectID == 0 ? "Save" : "Update"}
+                {classID == 0 ? "Save" : "Update"}
               </button>
             </div>
           </div>
@@ -163,4 +154,4 @@ const SubjectCreate = ({ title, subjectID }) => {
   }
 };
 
-export default SubjectCreate;
+export default ClassMasterEdit;

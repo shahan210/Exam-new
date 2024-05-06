@@ -11,7 +11,7 @@ export const subjectGet = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -34,7 +34,7 @@ export const subjectGet = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -67,7 +67,7 @@ export const CreateSubject = async (req, res) => {
         newData.QDescription,
         Adddate,
         newData.AddedBy,
-        newData.IsActive,
+        newData.IsActive === true ? 1 : 0,
       ]
     );
     if (result.length > 0) {
@@ -77,7 +77,7 @@ export const CreateSubject = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result],
+            JSONData1: result,
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -93,13 +93,13 @@ export const CreateSubject = async (req, res) => {
         status: 200,
       });
     } else {
-      res.status(200).json({
+      res.json({
         data: [
           {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result],
+            JSONData1: result,
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -135,7 +135,7 @@ export const editSubject = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -157,7 +157,7 @@ export const editSubject = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -202,7 +202,7 @@ export const UpdateSubject = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -224,7 +224,62 @@ export const UpdateSubject = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
+            JSONData2: [],
+            JSONData3: [],
+            JSONData4: [],
+            JSONData5: [],
+            JSONData1Remarks: "",
+            JSONData2Remarks: "",
+            JSONData3Remarks: "",
+            JSONData4Remarks: "",
+            JSONData5Remarks: "",
+          },
+        ],
+        message: "no data found",
+      });
+      console.log(result[0]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const DeleteSubject = async (req, res) => {
+  const id = req.body.id.join(",");
+  try {
+    const result = await pool.query(
+      `DELETE FROM subjectsmaster WHERE SubjectID IN (${id});`
+    );
+    if (result.length > 0) {
+      res.json({
+        data: [
+          {
+            ActionType: "",
+            ErrorMessage: "",
+            ErrorCode: "",
+            JSONData1: result[0],
+            JSONData2: [],
+            JSONData3: [],
+            JSONData4: [],
+            JSONData5: [],
+            JSONData1Remarks: "",
+            JSONData2Remarks: "",
+            JSONData3Remarks: "",
+            JSONData4Remarks: "",
+            JSONData5Remarks: "",
+          },
+        ],
+        message: "successfull",
+        status: 200,
+      });
+    } else {
+      res.status(200).json({
+        data: [
+          {
+            ActionType: "",
+            ErrorMessage: "",
+            ErrorCode: "",
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],

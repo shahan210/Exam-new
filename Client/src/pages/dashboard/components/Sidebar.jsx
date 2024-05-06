@@ -4,7 +4,7 @@ const Sidebar = () => {
     <aside className="w-64 min-h-screen p-6 border-r hidden md:block bg-gray-800 text-white">
       <ul className="space-y-2 ">
         <li>
-          <a href="/dashboard">
+          <a href="/">
             <button className="menu--button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -28,46 +28,50 @@ const Sidebar = () => {
           </a>
         </li>
         <li>
-          <button className="menu--button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="lucide lucide-book-check mr-2 h-4 w-4"
-            >
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-              <path d="m9 9.5 2 2 4-4"></path>
-            </svg>
-            Class Master
-          </button>
+          <a href="/class_master">
+            <button className="menu--button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="lucide lucide-book-check mr-2 h-4 w-4"
+              >
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                <path d="m9 9.5 2 2 4-4"></path>
+              </svg>
+              Class Master
+            </button>
+          </a>
         </li>
         <li>
-          <button className="menu--button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="lucide lucide-users mr-2 h-4 w-4"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            Subject Master
-          </button>
+          <a href="/subject_master">
+            <button className="menu--button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="lucide lucide-users mr-2 h-4 w-4"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              Subject Master
+            </button>
+          </a>
         </li>
         <li>
           <a className="menu--button" href="/dashboard/exams">
