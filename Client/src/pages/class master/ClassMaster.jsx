@@ -22,7 +22,7 @@ const ClassMaster = () => {
   const fetchClassess = async () => {
     try {
       const result = await getClassTable();
-      // console.log(result[0][0]);
+      console.log(result);
       setClassList(result[0]);
       setTimeout(() => {
         setLoading(false);
