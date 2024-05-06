@@ -1,6 +1,5 @@
 import axios from "axios";
 const baseUrl = import.meta.env.VITE_URL;
-console.log(baseUrl);
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,
@@ -9,7 +8,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => {
     if (response && response.data) {
-      return response.data;
+      // console.log(response.data.data);
+      return response.data.data;
     } else {
       return response;
     }

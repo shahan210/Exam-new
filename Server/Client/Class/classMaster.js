@@ -11,7 +11,7 @@ export const getAllClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -34,7 +34,7 @@ export const getAllClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -58,16 +58,16 @@ export const getAllClass = async (req, res) => {
 //create
 export const CreateClass = async (req, res) => {
   const newData = req.body;
-  console.log(newData);
+  // console.log(newData);
+  const QstClass = newData.CLNAME + "-" + newData.SECNAME;
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const autoID = Date.now() + Math.random();
-
   try {
     const result = await pool.query(
       "INSERT INTO classmaster (ClAutoId, QstClass , CLNAME, SECNAME,  AddedDate, AddedBy, IsActive) VALUES (?,?,?,?,?,?,?);",
       [
         autoID,
-        newData.QstClass,
+        QstClass,
         newData.CLNAME,
         newData.SECNAME,
         Adddate,
@@ -141,7 +141,7 @@ export const editClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -163,7 +163,7 @@ export const editClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -189,11 +189,13 @@ export const updateClass = async (req, res) => {
   const id = req.params.id;
   const newData = req.body;
   const ModifiedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const QstClass = newData.CLNAME + "-" + newData.SECNAME;
+
   try {
     const result = await pool.query(
       "UPDATE classmaster SET QstClass = ?, CLNAME = ?, SECNAME = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE ClassId = ?;",
       [
-        newData.QstClass,
+        QstClass,
         newData.CLNAME,
         newData.SECNAME,
         ModifiedDate,
@@ -210,7 +212,7 @@ export const updateClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -232,7 +234,64 @@ export const updateClass = async (req, res) => {
             ActionType: "",
             ErrorMessage: "",
             ErrorCode: "",
-            JSONData1: [result[0]],
+            JSONData1: result[0],
+            JSONData2: [],
+            JSONData3: [],
+            JSONData4: [],
+            JSONData5: [],
+            JSONData1Remarks: "",
+            JSONData2Remarks: "",
+            JSONData3Remarks: "",
+            JSONData4Remarks: "",
+            JSONData5Remarks: "",
+          },
+        ],
+        message: "no data found",
+      });
+      console.log(result[0]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const DeleteClass = async (req, res) => {
+  const id = req.body.id.join(",");
+  try {
+    const result = await pool.query(
+      `DELETE FROM classmaster WHERE ClassId IN (${id});`
+    );
+    console.log(result);
+    if (result.length > 0) {
+      res.json({
+        data: [
+          {
+            ActionType: "",
+            ErrorMessage: "",
+            ErrorCode: "",
+            JSONData1: result[0],
+            JSONData2: [],
+            JSONData3: [],
+            JSONData4: [],
+            JSONData5: [],
+            JSONData1Remarks: "",
+            JSONData2Remarks: "",
+            JSONData3Remarks: "",
+            JSONData4Remarks: "",
+            JSONData5Remarks: "",
+          },
+        ],
+        message: "successfull",
+        status: 200,
+      });
+    } else {
+      res.status(200).json({
+        data: [
+          {
+            ActionType: "",
+            ErrorMessage: "",
+            ErrorCode: "",
+            JSONData1: result[0],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],

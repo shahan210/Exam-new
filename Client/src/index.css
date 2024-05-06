@@ -40,3 +40,24 @@ body {
     transform: rotate(360deg);
   }
 }
+.switch {
+  @apply flex;
+}
+.switch input[type="checkbox"] {
+  @apply h-0 w-0 invisible;
+}
+.switch label {
+  @apply cursor-pointer w-[38px] h-4 bg-[rgb(0,0,0,0.2)] block relative transition-[0.3s] box-content p-1 rounded-[50em];
+}
+.switch label > .slider.round {
+  @apply content-[''] absolute w-4 h-4 bg-white transition-[0.3s] rounded-[50em];
+}
+.switch input:checked + label {
+  @apply bg-red-500;
+}
+.switch input:checked + label > .slider.round {
+  @apply translate-x-[calc(100%_+_5px)] text-[black];
+}
+.slider.round {
+  @apply w-auto h-auto text-center text-[gray] m-0 p-0;
+}
