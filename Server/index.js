@@ -8,8 +8,8 @@ import connectToDatabase from "./middleware/db.connection.js";
 
 dotenv.config();
 const app = express();
-const port = 3000;
-app.use(cors({ origin: ["http://localhost:3000", "http://localhost:5173"] }));
+const port = 4040;
+app.use(cors({ origin: ["http://localhost:3000", "http://localhost:5173","*"] }));
 connectToDatabase();
 app.use(express.json());
 
