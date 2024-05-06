@@ -20,7 +20,7 @@ const SubjectMaterHome = ({ subjectList, handleTrue }) => {
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg h-[530px] overflow-y-auto">
       <ToastContainer />
       <table className="w-full text-md text-left rtl:text-right text-gray-200 dark:text-gray-200">
-        <thead className="text-sm text-gray-200 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-200 sticky top-0">
+        <thead className="text-sm text-gray-200 uppercase bg-gray-600 dark:bg-gray-800 dark:text-gray-200 sticky top-0">
           <tr>
             <th scope="col" className="px-6 py-3">
               Action{" "}
@@ -44,8 +44,8 @@ const SubjectMaterHome = ({ subjectList, handleTrue }) => {
                 <tr
                   className={
                     i % 2 === 0
-                      ? "bg-black border-b dark:bg-white dark:border-gray-700"
-                      : "bg-black border-b dark:bg-gray-100 dark:border-gray-700"
+                      ? "bg-white border-b dark:bg-white dark:border-gray-700"
+                      : "bg-gray-100 border-b dark:bg-gray-100 dark:border-gray-700"
                   }
                 >
                   <td className="px-6 py-4 flex">

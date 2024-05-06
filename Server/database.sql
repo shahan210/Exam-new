@@ -39,7 +39,7 @@ CREATE TABLE AdminUserLogins (
     RightsDetails VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE QB_AdminUserRights (
+CREATE TABLE AdminUserRights (
     RightID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     code INT,
     remark VARCHAR(100),
