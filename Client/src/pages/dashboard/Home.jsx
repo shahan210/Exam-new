@@ -1,17 +1,14 @@
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
+import Layout from "../../global/components/Layout";
 
 const Home = () => {
-  return (
-    <>
-      <Navbar />
-      <div className="min-h-screen flex">
-        <Sidebar />
-        <Dashboard />
-      </div>
-    </>
-  );
+    return (
+        <>
+            <Layout>
+                <Dashboard />
+            </Layout>
+        </>
+    );
 };
 
 export default Home;
