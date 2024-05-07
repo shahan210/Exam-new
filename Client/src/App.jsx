@@ -7,6 +7,7 @@ import SubjectMaster from "./pages/subject master/SubjectMaster";
 import LoginPage from "./pages/login";
 import UserMaster from "./pages/users/UserMaster";
 import ExamMaster from "./pages/examMaster";
+import AddNewQuestionMaster from "./pages/examMaster/Quiz/addNew";
 function App() {
     return (
         <>
@@ -15,6 +16,7 @@ function App() {
                     <Routes>
                         <Route path="/" index element={<Home />} />
                         <Route path="/class_master" element={<ClassMaster />} />
+                        <Route path="/exam_master/add-new" element={<AddNewQuestionMaster />} />
                         <Route path="/exam_master" element={<ExamMaster />} />
                         <Route path="/login_master" element={<LoginPage />} />
                         <Route path="/subject_master" element={<SubjectMaster />} />

@@ -1,8 +1,5 @@
-import { Copy, Delete, Edit2, Plus, PlusCircle, Printer, RefreshCcw, View } from "lucide-react";
+import { Copy, Delete, Edit, Edit2, Plus, PlusCircle, Printer, RefreshCcw, View } from "lucide-react";
 import { useState, useEffect } from "react";
-import { convertDotNetDate } from "../../utils/helpers";
-import ClassSelect from "./components/ClassSelect";
-import SubjectSelect from "./components/SubjectSelect";
 import InsertExamNew from "./components/InsertExamNew";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -17,43 +14,75 @@ import {
     DialogTrigger,
 } from "../../components/ui/dialog";
 import Layout from "../../global/components/Layout";
+import getClassTable from "../../API/classMaster/getClassTable";
+import { toast } from "react-toastify";
+import getExamList from "../../API/examMaster/getExamList";
+import { getSubjectTable } from "../../API/subjectMaster/getSubjectTable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 export default function Exams() {
+    const navigate = useNavigate();
+
     const [input, setInput] = useState({
         year: "2023",
-        class: "",
-        subject: "",
+        className: {
+            name: "",
+            id: "",
+        },
+        subject: {
+            name: "",
+            id: "",
+        },
         term: "",
     });
 
     const [selectedQuestionTestID, setSelectedQuestionTestID] = useState(null);
     const [selected, setSelected] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [exam, setExam] = useState([]);
 
-    // const [showModal, setShowModal] = useState(false);
-    // const [form, setForm] = useState();
+    const [classList, setClassList] = useState([]);
+    const [subjectList, setSubjectList] = useState([]);
 
-    // const handleFormSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (!(input.class === "" || input.subject === "" || input.year === "")) {
-    //         const form = new FormData();
-    //         form.append("description", "Request For Stock Item Display List");
-    //         form.append("ReqYear", input.year);
-    //         form.append("ReqClassID", input.class);
-    //         form.append("ReqSubjID", input.subject);
-    //         form.append("ReqExamNme", "");
-    //         form.append("title", "GetExamDefinitionList");
-    //         performRequest(form);
-    //     }
-    // };
+    const fetchClassess = async () => {
+        try {
+            const result = await getClassTable();
+            const filterClass = result[0]?.map((data) => ({
+                id: data?.ClassId,
+                name: data?.QstClass,
+            }));
+
+            setClassList(filterClass);
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
+        } catch (error) {
+            console.log(error);
+            toast.error("error");
+        }
+    };
+
+    const fetchSubjects = async () => {
+        try {
+            const result = await getSubjectTable();
+
+            const filterClass = result[0]?.map((data) => ({
+                id: data?.SubjectID,
+                name: data?.SubjectName,
+            }));
+            setSubjectList(filterClass);
+            setTimeout(() => {
+                setLoading(false);
+            }, 300);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
-        const examForm = new FormData();
-        examForm.append("title", "GetExamQuestionsList");
-        examForm.append("description", "Request Question By Code");
-        examForm.append("ReqQuestionTestID", "38");
-        // handleRequest(examForm);
-
-        // console.log("EXAM DATA", examData);
+        fetchSubjects();
+        fetchClassess();
     }, []);
 
     const handleEdit = () => {
@@ -65,60 +94,138 @@ export default function Exams() {
     //     setSelected(true);
     // };
 
+    const handleSelect = (v, val) => {
+        if (val === "class") {
+            const filterData = classList.filter((item) => item.name === v);
+            setInput({
+                ...input,
+                className: {
+                    id: filterData[0]?.id,
+                    name: filterData[0]?.name,
+                },
+            });
+        } else if (val === "sub") {
+            const filterData = subjectList.filter((item) => item.name === v);
+            setInput({
+                ...input,
+                subject: {
+                    id: filterData[0]?.id,
+                    name: filterData[0]?.name,
+                },
+            });
+        }
+    };
+
+    const handleRefresh = async () => {
+        if (input?.className.id === "" || input?.subject.id === "") return toast.warn("Please select class and subject");
+
+        try {
+            const response = await getExamList(input);
+            if (response.length > 0) {
+                setExam(response[0]);
+            } else {
+                setExam([]);
+            }
+            console.log(response, "resalksjdflkjhlkj");
+        } catch (error) {
+            toast.error(`${error}`);
+            console.log(error);
+        }
+    };
+
+    const handleRadioChange = (e) => {
+        setSelectedQuestionTestID(e.target.value);
+        console.log(e.target.value);
+        setSelected(true);
+    };
+
+    const handleAddQuestion = () => {
+        console.log("hey");
+        navigate(`/exam_master/add-new`, {
+            state: {
+                id: selectedQuestionTestID,
+            },
+        });
+    };
+
     return (
         <>
             <Layout>
                 <form className="flex  flex-col">
                     {/* <form onSubmit={handleFormSubmit} className="flex  flex-col"> */}
-                    <div className="flex flex-col space-y-2 md:w-2/6">
-                        <div className="md:flex md:items-center md:space-x-2 justify-between flex-col md:flex-row">
-                            <Label htmlFor="year" className="md:text-sm text-md">
-                                Year
-                            </Label>
-                            <Input
-                                value={input.year}
-                                className="md:w-64"
-                                id="year"
-                                onChange={(e) =>
-                                    setInput({
-                                        ...input,
-                                        year: e.target.value,
-                                    })
-                                }
-                            ></Input>
+                    <div className="flex flex-col w-full my-3">
+                        <div className="flex space-y-2 flex-col w-2/3">
+                            <div className="md:flex md:items-center md:space-x-2 justify-between flex-col md:flex-row">
+                                <Label htmlFor="year" className="md:text-sm text-md">
+                                    Year
+                                </Label>
+                                <Input
+                                    value={input.year}
+                                    className="md:w-64"
+                                    id="year"
+                                    onChange={(e) =>
+                                        setInput({
+                                            ...input,
+                                            year: e.target.value,
+                                        })
+                                    }
+                                ></Input>
+                            </div>
+                            <div className="md:flex md:items-center md:space-x-2 justify-between flex-col md:flex-row">
+                                <Label htmlFor="term" className="md:text-sm text-md">
+                                    Term
+                                </Label>
+                                <Input
+                                    value={input.term}
+                                    className="md:w-64"
+                                    id="term"
+                                    onChange={(e) =>
+                                        setInput({
+                                            ...input,
+                                            term: e.target.value,
+                                        })
+                                    }
+                                ></Input>
+                            </div>
+                            <div className="flex items-center space-x-2 justify-between">
+                                <Label htmlFor="class" className="md:text-sm text-md">
+                                    Class
+                                </Label>
+                                <Select defaultValue={input.className.name} onValueChange={(v) => handleSelect(v, "class")}>
+                                    <SelectTrigger id="class" className="w-64">
+                                        <SelectValue placeholder={loading ? "Loading..." : "Choose Class"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {classList.length > 0 &&
+                                            classList.map((c, ind) => (
+                                                <SelectItem value={c.name} key={ind}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex items-center space-x-2 justify-between">
+                                <Label htmlFor="subject" className="md:text-sm text-md">
+                                    Subject
+                                </Label>
+                                <Select defaultValue={input.subject.name} onValueChange={(v) => handleSelect(v, "sub")}>
+                                    <SelectTrigger id="class" className="w-64">
+                                        <SelectValue placeholder={loading ? "Loading..." : "Choose Subject"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {subjectList.length > 0 &&
+                                            subjectList.map((subject, ind) => (
+                                                <SelectItem value={subject.name} key={ind}>
+                                                    {subject.name}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                        <div className="md:flex md:items-center md:space-x-2 justify-between flex-col md:flex-row">
-                            <Label htmlFor="term" className="md:text-sm text-md">
-                                Term
-                            </Label>
-                            <Input
-                                value={input.term}
-                                className="md:w-64"
-                                id="term"
-                                onChange={(e) =>
-                                    setInput({
-                                        ...input,
-                                        term: e.target.value,
-                                    })
-                                }
-                            ></Input>
-                        </div>
-                        <div className="flex items-center space-x-2 justify-between">
-                            <Label htmlFor="class" className="md:text-sm text-md">
-                                Class
-                            </Label>
-                            <ClassSelect handleChange={(v) => setInput({ ...input, class: v })} selected={input.class} />
-                        </div>
-                        <div className="flex items-center space-x-2 justify-between">
-                            <Label htmlFor="subject" className="md:text-sm text-md">
-                                Subject
-                            </Label>
-                            <SubjectSelect
-                                handleChange={(v) => setInput({ ...input, subject: v })}
-                                selected={input.subject}
-                            />
-                        </div>
-                        <Button>
+
+                        <Button type="button" className={`w-fit`} onClick={handleRefresh}>
                             <RefreshCcw className="mr-2 h-4 w-4" />
                             Refresh
                         </Button>
@@ -155,7 +262,7 @@ export default function Exams() {
                         <View className="mr-2 h-4 w-4" />
                         View/Change
                     </Button>
-                    <Button disabled={selectedQuestionTestID === null}>
+                    <Button onClick={handleAddQuestion} disabled={selectedQuestionTestID === null}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add Questions
                     </Button>
@@ -187,13 +294,12 @@ export default function Exams() {
                 </div>
             )} */}
 
-                <div className="md:w-2/4 mt-2 border rounded-sm overflow-hidden">
+                <div className="mt-2 border rounded-sm overflow-hidden">
                     <Table className="min-w-full bg-white border border-gray-300">
-                        {/* {exams && exams.length < 1 && !loading && (
-                        <TableCaption className="text-center py-2 text-gray-700">No exams found</TableCaption>
-                    )}
-                    {loading && <TableCaption className="text-center py-2 text-gray-700">Loading...</TableCaption>}
-                    {error && <TableCaption className="text-center py-2 text-red-500">{error}</TableCaption>} */}
+                        {exam && exam.length < 1 && !loading && (
+                            <TableCaption className="text-center py-2 text-gray-700">No exam found</TableCaption>
+                        )}
+                        {loading && <TableCaption className="text-center py-2 text-gray-700">Loading...</TableCaption>}
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="px-2 py-2">Select</TableHead>
@@ -206,31 +312,34 @@ export default function Exams() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {/* {exams &&
-                            exams.map((exam) => (
-                                <TableRow key={exam.ExamName} className="hover:bg-gray-100">
-                                    <TableCell className="px-2 py-2 font-medium">
-                                        <input
-                                            type="radio"
-                                            value={exam.QuestionTestID}
-                                            onChange={handleRadioChange}
-                                            checked={selectedQuestionTestID === exam.QuestionTestID}
-                                        />
-                                    </TableCell>
-                                    <TableCell className="px-2 py-2">{exam.ExamName}</TableCell>
-                                    <TableCell className="px-2 py-2">{exam.AcaYear}</TableCell>
-                                    <TableCell className="px-2 py-2">{exam.ClassName}</TableCell>
-                                    <TableCell className="px-2 py-2">{exam.SubjectName}</TableCell>
-                                    <TableCell className="px-2 py-2">{convertDotNetDate(exam.ExamDate) || ""}</TableCell>
-                                    <TableCell className="px-2 py-2">
-                                        <Button asChild>
-                                            <Link href={`/dashboard/edit-exam/${exam.QuestionTestID}`}>
-                                                <Edit className="h-4 w-4 text-blue-500" />
-                                            </Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))} */}
+                            {exam &&
+                                exam.map((data, ind) => {
+                                    return (
+                                        <TableRow key={ind} className="hover:bg-gray-100">
+                                            <TableCell className="px-2 py-2 font-medium">
+                                                <input
+                                                    type="radio"
+                                                    className="size-5"
+                                                    value={data?.QuestionTestID}
+                                                    onChange={handleRadioChange}
+                                                    checked={selectedQuestionTestID == data.QuestionTestID ? true : false}
+                                                />
+                                            </TableCell>
+                                            <TableCell className="px-2 py-2">{data.ExamName}</TableCell>
+                                            <TableCell className="px-2 py-2">{data.AcaYear}</TableCell>
+                                            <TableCell className="px-2 py-2">{data.ClassName}</TableCell>
+                                            <TableCell className="px-2 py-2">{data.SubjectName}</TableCell>
+                                            <TableCell className="px-2 py-2">{data.ExamDate}</TableCell>
+                                            <TableCell className="px-2 py-2">
+                                                <Button asChild>
+                                                    <a href={``}>
+                                                        <Edit className="h-4 w-4 text-blue-500" />
+                                                    </a>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </div>
