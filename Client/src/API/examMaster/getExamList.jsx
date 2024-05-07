@@ -1,16 +1,21 @@
 import api from "../post.jsx";
 
-const getExamList = async () => {
-  let userData = [];
-  try {
-    const result = await api.post("/class");
-    console.log(result);
-    userData = result?.map((item) => item.JSONData1);
-    return userData;
-  } catch (error) {
-    console.log("errorr");
-    console.log(error);
-  }
+const getExamList = async (data) => {
+    let userData = [];
+    console.log(data, "data");
+    try {
+      const result = await api.post("/exam", {
+        year: data?.year,
+        class: data?.className,
+        subject:data?.subject
+      });
+      console.log(result,"result");
+      userData = result?.map((item) => item.JSONData1);
+      return userData;
+    } catch (error) {
+      console.log("errorr");
+      console.log(error);
+    }
 };
 
 export default getExamList;
