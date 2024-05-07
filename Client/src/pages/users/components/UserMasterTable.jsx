@@ -1,11 +1,16 @@
 import React from "react";
+import EditIcon from "../../../assets/svg/edit.svg";
+import Trash from "../../../assets/svg/Trash.svg";
 
-const UserMasterTable = ({ UserList }) => {
+const UserMasterTable = ({ UserList, handleTrue }) => {
   return (
     <div className="tableDiv">
       <table className="table">
         <thead className="tableHead">
           <tr>
+            <th scope="col" className="px-6 py-3">
+              Action{" "}
+            </th>{" "}
             <th scope="col" className="px-6 py-3">
               SI/No
             </th>
@@ -24,12 +29,27 @@ const UserMasterTable = ({ UserList }) => {
           {UserList !== undefined &&
             UserList.length > 0 &&
             UserList?.map((subject, i) => {
-              console.log(subject);
+              // console.log(subject);
               return (
                 <tr
                   key={i}
                   className={i % 2 === 0 ? "tableBody-1" : "tableBody-2"}
                 >
+                  <td className="px-6 py-4 flex">
+                    <img
+                      onClick={() => handleTrue(subject?.LoginID)}
+                      src={EditIcon}
+                      alt="edit"
+                      className="Action-Button"
+                    />
+                    <img
+                      // onClick={() => deleteSubject()}
+                      src={Trash}
+                      alt="edit"
+                      className="Action-Button"
+                    />
+                    {/* <input type="checkbox" /> */}
+                  </td>
                   <td className="px-6 py-4">{i + 1}</td>
                   <td className="px-6 py-4">{subject?.UserName}</td>
                   <td className="px-6 py-4">{subject?.EmailID}</td>

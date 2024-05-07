@@ -311,7 +311,7 @@ export const newQuestionMaster = async (req, res) => {
 
 export const createdQuestionMaster = async (req, res) => {
     const data = req.body;
-    
+
     const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
     const pa = JSON.parse(data.data);

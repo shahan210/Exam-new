@@ -47,6 +47,7 @@ CREATE TABLE adminuserrights (
     mdule VARCHAR(50),
     BatchID INT
 );
+
 CREATE TABLE examdefinitiontmst (
     QuestionTestID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     AcaYear INT,
@@ -64,7 +65,6 @@ CREATE TABLE examdefinitiontmst (
     ExamHeading VARCHAR(2000),
     ExamSubHeading VARCHAR(1500)
 );
-
 
 CREATE TABLE questionbankmst (
     QuestionBankID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,

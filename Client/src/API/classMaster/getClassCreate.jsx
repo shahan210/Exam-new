@@ -4,11 +4,12 @@ import api from "../post.jsx";
 const getClassCreate = async (data) => {
   console.log(data);
   let userData = [];
+  const getuser = JSON.parse(localStorage.getItem("user"));
   try {
     const result = await api.post("/class", {
       CLNAME: data.CLNAME,
       SECNAME: data.SECNAME,
-      AddedBy: "shahan",
+      AddedBy: getuser.UserName,
       IsActive: data.IsActive,
     });
     console.log(result);
