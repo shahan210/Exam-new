@@ -14,7 +14,7 @@ const ModalComponent = ({ children, title }) => {
       <div className="relative p-4 w-full h-screen flex justify-center items-center max-w-screen max-h-screen">
         <div className="absolute inset-0 bg-black opacity-35 w-full h-full"></div>
         <div className="relative bg-white z-[100000] w-full md:w-fit md:min-w-[80%] rounded-lg shadow-xl">
-          <div className="flex items-center w-full p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+          <div className="flex items-center w-full p-2  border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl w-full font-semibold text-center mx-auto text-gray-900">
               {title}
             </h3>
@@ -42,7 +42,7 @@ const ModalComponent = ({ children, title }) => {
               <span className="sr-only">Close modal</span>
             </button>
           </div>
-          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto md:p-5 space-y-4">
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto md:p-3 space-y-4">
             {children}
           </div>
         </div>

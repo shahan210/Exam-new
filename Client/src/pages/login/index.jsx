@@ -1,36 +1,113 @@
 /* eslint-disable react/no-unknown-property */
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Auth from "../../API/login/Auth";
+import { object, string } from "yup";
+
+let userSchema = object({
+  UserName: string().required(),
+  UserPassword: string().required(),
+  year: string().required(),
+});
 
 const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [details, setDetails] = useState({
+    UserName: "",
+    UserPassword: "",
+    year: "",
+  });
+  const navigate = useNavigate();
+  const authenticateUser = async (e) => {
+    e.preventDefault();
+    if (
+      details.UserName === "" ||
+      details.UserPassword === "" ||
+      details.year === "" ||
+      details.year < 2023
+    ) {
+      // const user = await userSchema.isValid(details);
+      // console.log(user);
+      if (details.UserName == "") {
+        toast.error("Enter Username");
+      }
+      if (details.UserPassword === "") {
+        toast.error("Enter Password");
+      }
+      if (details.year === "") {
+        toast.error("Select a year");
+      } else if (details.year < 2023) {
+        toast.error("Use year above 2023");
+      }
+      setSubmitted(false);
+      return;
+    } else {
+      try {
+        const result = await Auth(details);
+        if (result.JSONData1.length === 0) {
+          toast.error("User not found. Try again");
+          setDetails({
+            UserName: "",
+            UserPassword: "",
+            year: "",
+          });
+        } else {
+          toast.success("Login successfull");
+          navigate("/dashboard");
+          const getUserDeatils = result.JSONData1.map((item) => {
+            return {
+              EmailID: item.EmailID,
+              PhNo: item.PhNo,
+              UserLocation: item.UserLocation,
+              UserName: item.UserName,
+            };
+          })[0];
+          const rights = result.JSONData1.map((item) => item.RightsDetails);
+          localStorage.setItem("user", JSON.stringify(getUserDeatils));
+          localStorage.setItem("rights", JSON.stringify(rights));
+        }
+        setSubmitted(false);
+      } catch (error) {
+        console.log(error);
+        toast.error("error");
+        setSubmitted(false);
+      }
+    }
+  };
+
   return (
-    <div class="font-[sans-serif] text-[#333]">
-      <div class="min-h-screen flex fle-col items-center justify-center py-6 px-4">
-        <div class="grid md:grid-cols-2 items-center gap-4 max-w-7xl w-full">
-          <div class="border border-gray-300 rounded-md p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
-            <form class="space-y-6">
-              <div class="mb-10">
-                <h3 class="text-3xl font-extrabold">Sign in</h3>
-                <p class="text-sm mt-4">
+    <div className="font-[sans-serif] text-[#333]">
+      <div className="min-h-screen flex fle-col items-center justify-center py-6 px-4">
+        <div className="grid md:grid-cols-2 items-center gap-4 max-w-7xl w-full">
+          <div className="border border-gray-300 rounded-md p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
+            <form className="space-y-6">
+              <div className="mb-10">
+                <h3 className="text-3xl font-extrabold">Sign in</h3>
+                <p className="text-sm mt-4">
                   Sign in to your account and explore a world of possibilities.
                   Your journey begins here.
                 </p>
               </div>
               <div>
-                <label class="text-sm mb-2 block">User name</label>
-                <div class="relative flex items-center">
+                <label className="text-sm mb-2 block">User name</label>
+                <div className="relative flex items-center">
                   <input
                     name="username"
                     type="text"
                     required
-                    class="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]"
+                    value={details.UserName}
+                    onChange={(e) =>
+                      setDetails({ ...details, UserName: e.target.value })
+                    }
+                    className="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]"
                     placeholder="Enter user name"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="#bbb"
                     stroke="#bbb"
-                    class="w-[18px] h-[18px] absolute right-4"
+                    className="w-[18px] h-[18px] absolute right-4"
                     viewBox="0 0 24 24"
                   >
                     <circle
@@ -47,20 +124,24 @@ const LoginPage = () => {
                 </div>
               </div>
               <div>
-                <label class="text-sm mb-2 block">Password</label>
-                <div class="relative flex items-center">
+                <label className="text-sm mb-2 block">Password</label>
+                <div className="relative flex items-center">
                   <input
                     name="password"
                     type="password"
                     required
-                    class="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]"
+                    value={details.UserPassword}
+                    onChange={(e) =>
+                      setDetails({ ...details, UserPassword: e.target.value })
+                    }
+                    className="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]"
                     placeholder="Enter password"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="#bbb"
                     stroke="#bbb"
-                    class="w-[18px] h-[18px] absolute right-4 cursor-pointer"
+                    className="w-[18px] h-[18px] absolute right-4 cursor-pointer"
                     viewBox="0 0 128 128"
                   >
                     <path
@@ -70,45 +151,44 @@ const LoginPage = () => {
                   </svg>
                 </div>
               </div>
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label for="remember-me" class="ml-3 block text-sm">
-                    Remember me
-                  </label>
-                </div>
-                <div class="text-sm">
-                  <a
-                    href="jajvascript:void(0);"
-                    class="text-blue-600 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+              <div className="flex items-center justify-center gap-2">
+                <select
+                  className="w-1/2 mx-auto rounded-md shadow-sm flex justify-center bg-slate-200 border border-blue-400 py-3 px-4 placeholder-gray-600 focus:outline-none focus:border-slate-500"
+                  onChange={(e) =>
+                    setDetails({ ...details, year: e.target.value })
+                  }
+                  value={details.year}
+                >
+                  <option value="">Select</option>
+
+                  <option value="2017">2017</option>
+                  <option value="2018">2018</option>
+                  <option value="2019">2019</option>
+                  <option value="2020">2020</option>
+                  <option value="2021">2021</option>
+                  <option value="2022">2022</option>
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
               </div>
-              <div class="!mt-10">
+              <div className="!mt-10">
                 {submitted ? (
                   <>
                     <button
                       type="button"
-                      onClick={() => setSubmitted(false)}
-                      class="w-full shadow-xl py-2.5 px-4 flex justify-center gap-1 items-center text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none"
+                      className="w-full shadow-xl py-2.5 px-4 flex justify-center gap-1 items-center text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none"
                     >
                       <div className="flex items-end gap-1">
-                        <div class="flex flex-row items-center gap-2">
-                          <div class="wrapperLoader">
-                            <div class="circleLoader"></div>
-                            <div class="circleLoader"></div>
-                            <div class="circleLoader"></div>
-                            <div class="shadowLoader"></div>
-                            <div class="shadowLoader"></div>
-                            <div class="shadowLoader"></div>
-                          </div>{" "}
+                        <div className="flex flex-row items-center gap-2">
+                          <div className="wrapperLoader">
+                            <div className="circleLoader"></div>
+                            <div className="circleLoader"></div>
+                            <div className="circleLoader"></div>
+                            <div className="shadowLoader"></div>
+                            <div className="shadowLoader"></div>
+                            <div className="shadowLoader"></div>
+                          </div>
                         </div>
                       </div>
                     </button>
@@ -117,8 +197,10 @@ const LoginPage = () => {
                   <>
                     <button
                       type="submit"
-                      onClick={() => setSubmitted(true)}
-                      class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none"
+                      onClick={(e) => {
+                        setSubmitted(true), authenticateUser(e);
+                      }}
+                      className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none"
                     >
                       Log in
                     </button>
@@ -127,10 +209,10 @@ const LoginPage = () => {
               </div>
             </form>
           </div>
-          <div class="lg:h-[400px] md:h-[300px] max-md:mt-10">
+          <div className="lg:h-[400px] md:h-[300px] max-md:mt-10">
             <img
               src="https://readymadeui.com/login-image.webp"
-              class="w-full h-full object-cover"
+              className="w-full h-full object-cover"
               alt="Dining Experience"
             />
           </div>

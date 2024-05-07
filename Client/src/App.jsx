@@ -8,23 +8,23 @@ import LoginPage from "./pages/login";
 import UserMaster from "./pages/users/UserMaster";
 import ExamMaster from "./pages/examMaster";
 function App() {
-    return (
-        <>
-            <GlobalProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" index element={<Home />} />
-                        <Route path="/class_master" element={<ClassMaster />} />
-                        <Route path="/exam_master" element={<ExamMaster />} />
-                        <Route path="/login_master" element={<LoginPage />} />
-                        <Route path="/subject_master" element={<SubjectMaster />} />
-                        <Route path="/user_master" element={<UserMaster />} />
-                        {/* <Route path="/subject_master" element={<SubjectMaster />} /> */}
-                    </Routes>
-                </BrowserRouter>
-            </GlobalProvider>
-        </>
-    );
+  return (
+    <>
+      <GlobalProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/dashboard" element={<Home />} />
+            <Route path="/class_master" element={<ClassMaster />} />
+            <Route path="/exam_master" element={<ExamMaster />} />
+            <Route path="/subject_master" element={<SubjectMaster />} />
+            <Route path="/user_master" element={<UserMaster />} />
+            {/* <Route path="/subject_master" element={<SubjectMaster />} /> */}
+          </Routes>
+        </BrowserRouter>
+      </GlobalProvider>
+    </>
+  );
 }
 
 export default App;

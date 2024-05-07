@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import ModalComponent from "../../../global/components/Modal";
-import getSubjectCreate from "../../../API/subjectMaster/getSubjectCreate";
-import getSubjectSpecific from "../../../API/subjectMaster/getSubjectSpecific";
 import { useForm } from "react-hook-form";
-import { useGlobalContext } from "../../../global/GlobalContext";
-import getSubjectEdit from "../../../API/subjectMaster/getSubjectEdit";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import getSubjectCreate from "../../../API/subjectMaster/getSubjectCreate";
+import getSubjectEdit from "../../../API/subjectMaster/getSubjectEdit";
+import getSubjectSpecific from "../../../API/subjectMaster/getSubjectSpecific";
+import { useGlobalContext } from "../../../global/GlobalContext";
+import ModalComponent from "../../../global/components/Modal";
 
 const SubjectCreate = ({ title, subjectID }) => {
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,6 @@ const SubjectCreate = ({ title, subjectID }) => {
   } else {
     return (
       <ModalComponent title={title}>
-        <ToastContainer />
         <div>
           <div className=" bg-[#EEEEEE] text-black shadow-[rgba(0,0,0,0.24)_0px_3px_8px] rounded p-2 ">
             <div>
