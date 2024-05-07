@@ -6,6 +6,7 @@ const getUsers = async () => {
   try {
     const result = await api.get("/user");
     userData = result?.map((item) => item.JSONData1);
+    // console.log(userdata);
     return userData;
   } catch (error) {
     console.log("errorr");

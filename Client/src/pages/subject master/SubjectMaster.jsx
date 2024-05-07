@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getSubjectTable } from "../../API/subjectMaster/getSubjectTable";
 import { useGlobalContext } from "../../global/GlobalContext";
+import Layout from "../../global/components/Layout.jsx";
 import Spinner from "../../global/components/Spinner.jsx";
-import Navbar from "../dashboard/components/Navbar";
-import Sidebar from "../dashboard/components/Sidebar";
 import SubjectCreate from "./components/SubjectCreate";
 import SubjectMaterHome from "./components/SubjectMasterTable.jsx";
-import Layout from "../../global/components/Layout.jsx";
 const SubjectMaster = () => {
   const [subjectList, setSubjectList] = useState();
   const [loading, setLoading] = useState(true);
