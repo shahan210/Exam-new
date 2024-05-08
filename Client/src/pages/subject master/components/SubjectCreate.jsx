@@ -16,7 +16,6 @@ const SubjectCreate = ({ title, subjectID }) => {
   // create user and add addedd by
   const createSubject = async (data, e) => {
     e.preventDefault();
-
     try {
       const result = await getSubjectCreate(data);
       if (result[0][0]?.insertId === undefined) {

@@ -103,3 +103,9 @@ CREATE TABLE questionbankmst (
     Video VARCHAR(500),
     Image VARCHAR(500)
 );
+CREATE TABLE adminusersubjects (
+    UsrSubjID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    SubjectID INT NOT NULL, 
+    LoginID INT NOT NULL,
+    ClassId INT NOT NULL
+);
