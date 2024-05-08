@@ -36,12 +36,6 @@ const UserMaster = () => {
   return (
     <Layout>
       <div className="p-2 w-full">
-        {modalComponent && (
-          <UserMasterEdit
-            title={userID === 0 ? "Create New User" : "Edit User"}
-            userID={userID}
-          />
-        )}
         <div>
           <h1 className="text-xl">User Master</h1>
         </div>

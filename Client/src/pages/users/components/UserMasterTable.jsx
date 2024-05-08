@@ -1,8 +1,10 @@
 import React from "react";
 import EditIcon from "../../../assets/svg/edit.svg";
 import Trash from "../../../assets/svg/Trash.svg";
+import { useNavigate } from "react-router-dom";
 
 const UserMasterTable = ({ UserList, handleTrue }) => {
+  const navigate = useNavigate();
   return (
     <div className="tableDiv">
       <table className="table">
@@ -37,7 +39,13 @@ const UserMasterTable = ({ UserList, handleTrue }) => {
                 >
                   <td className="px-6 py-4 flex">
                     <img
-                      onClick={() => handleTrue(subject?.LoginID)}
+                      onClick={() => {
+                        navigate("/user_master/edit-user", {
+                          state: {
+                            id: subject?.LoginID,
+                          },
+                        });
+                      }}
                       src={EditIcon}
                       alt="edit"
                       className="Action-Button"
