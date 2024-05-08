@@ -7,6 +7,7 @@ import SubjectMaster from "./pages/subject master/SubjectMaster";
 import LoginPage from "./pages/login";
 import UserMaster from "./pages/users/UserMaster";
 import ExamMaster from "./pages/examMaster";
+import UserMasterEdit from "./pages/users/components/UserMasterEdit";
 import AddNewQuestionMaster from "./pages/examMaster/Quiz/addNew";
 import EditQuestion from "./pages/examMaster/Quiz/editQuestion";
 import EditQuestionMaster from "./pages/examMaster/components/editQuestionMaster";
@@ -25,7 +26,7 @@ function App() {
             <Route path="/exam_master/edit-new" element={<EditQuestion />} />
             <Route path="/exam_master/edit-quiz" element={<EditQuestionMaster />} />
             <Route path="/user_master" element={<UserMaster />} />
-            {/* <Route path="/subject_master" element={<SubjectMaster />} /> */}
+            <Route path="/user_master/edit-user" element={<UserMasterEdit />} />
           </Routes>
         </BrowserRouter>
       </GlobalProvider>
