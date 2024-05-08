@@ -1,4 +1,5 @@
-import { ChevronLeft, ImagePlus, X } from "lucide-react";
+/* eslint-disable no-prototype-builtins */
+import { ChevronLeft, X } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import Layout from "../../../global/components/Layout";
 import { Label } from "../../../components/ui/label";
@@ -13,6 +14,7 @@ import { Checkbox } from "../../../components/ui/checkbox";
 import getExamMasterInfo from "../../../API/examMaster/getExamMasterInfo";
 import { formatDateForInput } from "../../../utils/helpers";
 import getQuestionMaster from "../../../API/examMaster/getQuestionMaster";
+import createdQuestionMaster from "../../../API/examMaster/createdQuestionMaster";
 
 const AddNewQuestionMaster = () => {
     const location = useLocation();
@@ -93,18 +95,7 @@ const AddNewQuestionMaster = () => {
         term: "",
     });
 
-    const [questions, setQuestions] = useState({
-        title: "",
-        options: [
-            {
-                val: "",
-                title: "",
-                isCorrect: false,
-            },
-        ],
-        id: "",
-        val: "",
-    });
+    const [questions, setQuestions] = useState([{ name: "Answer1", value: "", isChecked: false }]);
 
     const fetchExamIdData = useCallback(async () => {
         try {
@@ -129,6 +120,22 @@ const AddNewQuestionMaster = () => {
                     QuestionTestID: data?.QuestionTestID || "",
                     SubjectID: data?.SubjectID || "",
                 });
+
+                setResult({
+                    ...result,
+                    ClassId: data?.ClassId || "",
+                    SubjectID: data?.SubjectID || "",
+                });
+
+                setInput({
+                    ...input,
+                    className: {
+                        id: data?.ClassId,
+                    },
+                    subject: {
+                        id: data?.SubjectID,
+                    },
+                });
             }
         } catch (error) {
             console.error("Error fetching exam data:", error);
@@ -138,15 +145,15 @@ const AddNewQuestionMaster = () => {
     const fetchQuestionMaster = useCallback(async () => {
         try {
             const response = await getQuestionMaster(id);
-            console.log(response, "result");
+
             if (response.length > 0) {
                 const data = response[0];
                 setResult({
                     ...result,
                     QuestionBankID: data.QuestionBankID,
                     QuestionTestID: data.QuestionTestID,
-                    QuestionGroupID: data.QuestionGroupID,
-                    QuestionGroupSLNO: data.QuestionGroupSLNO,
+                    QuestionGroupID: 1,
+                    QuestionGroupSLNO: 1,
                     QuestionGroupType: data.QuestionGroupType,
                     ClassId: data.ClassId,
                     SubjectID: data.SubjectID,
@@ -172,7 +179,7 @@ const AddNewQuestionMaster = () => {
                     Answer10: data.Answer10,
                     RightAnswer: data.RightAnswer,
                     IsActive: data.IsActive,
-                    AddedDate: data.AddedDate,
+                    AddedDate: formatDateForInput(data.AddedDate),
                     AddedBy: data.AddedBy,
                     ModifiedDate: data.ModifiedDate,
                     ModifiedBy: data.ModifiedBy,
@@ -182,7 +189,6 @@ const AddNewQuestionMaster = () => {
                     Image: data.Image,
                 });
             }
-            console.log(response, "result");
         } catch (error) {
             console.error("Error fetching exam data:", error);
         }
@@ -191,6 +197,11 @@ const AddNewQuestionMaster = () => {
     useEffect(() => {
         fetchExamIdData();
         fetchQuestionMaster();
+        setTimeout(() => {
+            if (!id) {
+                navigate(-1);
+            }
+        }, 3000);
     }, [id, fetchExamIdData, fetchQuestionMaster]);
 
     const fetchClassess = async () => {
@@ -247,11 +258,12 @@ const AddNewQuestionMaster = () => {
     }, []);
 
     const addOptionHandler = () => {
-        if (questions.options.length < 4) {
-            setQuestions((prev) => ({
-                ...prev,
-                options: [...prev.options, { title: "", val: "", isCorrect: false }],
-            }));
+        let nextName = `Answer${questions.length + 1}`;
+        if (questions.length < 4) {
+            while (questions.some((question) => question.name === nextName)) {
+                nextName = `Answer${parseInt(nextName.replace("Answer", "")) - 1}`;
+            }
+            setQuestions([...questions, { name: nextName, value: "", isChecked: false }]);
         } else {
             toast.warn("Maximum options allowed is 4");
         }
@@ -267,6 +279,10 @@ const AddNewQuestionMaster = () => {
                     name: filterData[0]?.name,
                 },
             });
+            setResult({
+                ...result,
+                ClassId: filterData[0]?.id,
+            });
         } else if (val === "sub") {
             const filterData = subjectList.filter((item) => item.name === v);
             setInput({
@@ -276,27 +292,77 @@ const AddNewQuestionMaster = () => {
                     name: filterData[0]?.name,
                 },
             });
+            setResult({
+                ...result,
+                SubjectID: filterData[0]?.id,
+            });
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setQuestions((prev) => ({
-            ...prev,
-            options: [
-                {
-                    title: value,
-                    isCorrect: false,
-                    val: name,
-                },
-            ],
-        }));
+    const handleInputChange = (e, index) => {
+        const values = [...questions];
+        values[index].value = e.target.value;
+        setQuestions(values);
     };
 
-    console.log(questions, "question");
+    const handleRemoveOption = (index) => {
+        const values = [...questions];
+        values[index].value = "";
+        setQuestions(values);
+    };
 
-    const handleMarkAsCorrect = (index, value, option) => {
-        console.log(index, value, option, "aaaaaaaaaa");
+    const handleCheckboxChange = (index) => {
+        const values = [...questions];
+        values.forEach((field, idx) => {
+            field.isChecked = idx === index;
+        });
+        setQuestions(values);
+        setResult({ ...result, RightAnswer: index + 1 });
+    };
+
+    useEffect(() => {
+        console.log("use");
+        // questions?.forEach((quesData) => {
+        //     console.log(quesData,'ques call');
+        //     console.log(quesData.name,'ques name');
+        //     console.log(quesData.value,'ques value');
+        //     setResult({
+        //         ...result,
+        //         [quesData.name]: quesData.value,
+        //     });
+        // });
+        setResult((prevResult) => {
+            const updatedResult = { ...prevResult }; // Preserve existing result values
+            questions?.forEach((quesData) => {
+                if (updatedResult.hasOwnProperty(quesData.name)) {
+                    // If the name already exists in result, update its value
+                    updatedResult[quesData.name] = quesData.value;
+                } else {
+                    // If the name doesn't exist in result, add it
+                    updatedResult[quesData.name] = quesData.value;
+                }
+            });
+            return updatedResult;
+        });
+    }, [questions]);
+
+    const handleSubmission = async (e) => {
+        e.preventDefault();
+
+        console.log(result, "result");
+        console.log(questions, "data");
+        if (result.RightAnswer === "") return toast.warn("Choose a right answer");
+
+        try {
+            const response = await createdQuestionMaster(result);
+            console.log(response);
+            if (response) {
+                toast.success("success");
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("error occured");
+        }
     };
 
     return (
@@ -378,7 +444,7 @@ const AddNewQuestionMaster = () => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col space-y-4">
+                        {/* <div className="flex flex-col space-y-4">
                             <div className="flex items-center">
                                 <Label htmlFor="questionType" className="text-md font-semibold w-48">
                                     Question Type
@@ -390,7 +456,7 @@ const AddNewQuestionMaster = () => {
                                     onChange={(e) => setResult({ ...result, Question1: e.target.value })}
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex flex-col space-y-4">
                             <div className="flex items-center">
@@ -417,82 +483,46 @@ const AddNewQuestionMaster = () => {
                                     className="border p-2 w-full"
                                 />
                             </div>
-                        </div>
-
-                        <div className="">
-                            <Label htmlFor="question-title" className="text-md font-semibold">
-                                Question Title
-                            </Label>
-
-                            <div className="flex space-x-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="questionDesc02" className="text-md font-semibold w-48">
+                                    Question Title
+                                </Label>
                                 <Input
                                     type="text"
-                                    id="question-title"
-                                    name="Question1"
+                                    name="QuestionDesc02"
                                     value={result?.Question1}
                                     onChange={(e) => setResult({ ...result, Question1: e.target.value })}
-                                    placeholder="Question title"
+                                    className="border p-2 w-full"
                                 />
-                                <Label
-                                    htmlFor={`file-input-question`}
-                                    // className="w-4 h-4 bg-red-400"
-                                >
-                                    <div className="bg-primary text-white p-2 rounded h-10 w-10 inline-flex items-center justify-center cursor-pointer">
-                                        <ImagePlus className="h-4 w-4" />
-                                    </div>
-                                </Label>
-
-                                <Input
-                                    // onChange={(e) => handleTitleImage(e)}
-                                    id={`file-input-question`}
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                ></Input>
                             </div>
-                            {/* {questionNewData[0].QB64Photo1 !== "" && ( */}
-                            <div className="rounded hover:border-primary border-2 w-28 relative mt-2">
-                                <Button
-                                    className="h-6 w-6 absolute top-1 left-1 rounded-full p-0"
-                                    // onClick={() => removeTitleImage()}
-                                    variant="destructive"
-                                >
-                                    <X />
-                                </Button>
-                                {/* <img className="h-28 w-28 " src={questionNewData[0].QB64Photo1} /> */}
-                            </div>
-                            {/* )} */}
                         </div>
 
-                        <div className="border p-4 py-4 space-y-4 rounded-md">
-                            {questions.options.map((option, optionIndex) => {
-                                const answer = "Answer" + (optionIndex + 1);
+                        {/* question title and its title image upload button  */}
 
+                        <div className="border p-4 py-4 space-y-4 rounded-md">
+                            {questions.map((option, optionIndex) => {
                                 return (
                                     <div className="flex flex-col gap-2" key={optionIndex}>
-                                        <div
-                                            key={optionIndex}
-                                            className="flex flex-col lg:flex-row  lg:space-x-2 items-center justify-between"
-                                        >
+                                        <div className="flex flex-col lg:flex-row  lg:space-x-2 items-center justify-between">
                                             <Label className="w-28" htmlFor={`option-${optionIndex}`}>{`Option ${
                                                 optionIndex + 1
                                             }`}</Label>
                                             <Input
                                                 id={`option-${optionIndex}`}
-                                                name={answer}
+                                                name={option.name}
                                                 className={"bg-green-200"}
-                                                value={option.title}
-                                                onChange={handleInputChange}
+                                                value={option.value}
+                                                onChange={(e) => handleInputChange(e, optionIndex)}
                                             />
                                             <div className="flex justify-between flex-1 space-x-2 items-center">
-                                                <Label
+                                                {/* <Label
                                                     htmlFor={`file-input-${optionIndex}`}
                                                     // className="w-4 h-4 bg-red-400"
                                                 >
                                                     <div className="bg-primary text-white p-2 rounded h-10 w-10 inline-flex items-center justify-center cursor-pointer">
                                                         <ImagePlus className="h-4 w-4" />
                                                     </div>
-                                                </Label>
+                                                </Label> */}
 
                                                 {/* <Input
                                                     // value={questions.options[
@@ -506,23 +536,22 @@ const AddNewQuestionMaster = () => {
                                                 ></Input> */}
                                                 <Button
                                                     type="button"
-                                                    // onClick={() => handleRemoveOption(optionIndex)}
+                                                    onClick={() => handleRemoveOption(optionIndex)}
                                                     variant="destructive"
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
                                                 <Checkbox
                                                     className="w-7 h-7"
-                                                    checked={option.isCorrect}
-                                                    onCheckedChange={(e) =>
-                                                        handleMarkAsCorrect(optionIndex, e.valueOf(), option)
-                                                    }
+                                                    checked={option.isChecked}
+                                                    onCheckedChange={() => handleCheckboxChange(optionIndex)}
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                 );
                             })}
+
                             {/* <Button type="button"> */}
                             <Button type="button" onClick={addOptionHandler}>
                                 Add Option
@@ -532,7 +561,7 @@ const AddNewQuestionMaster = () => {
                         <Button
                             type="submit"
                             className="bg-green-500 text-white px-4 py-2 mt-4 mx-auto"
-                            // onClick={handleCreation}
+                            onClick={handleSubmission}
                         >
                             Submit
                         </Button>
