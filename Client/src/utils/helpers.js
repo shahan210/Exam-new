@@ -26,3 +26,36 @@ export function convertToCalender(dateString) {
         return formattedDate;
     }
 }
+
+export const getNextDay = () => {
+    const currentDate = new Date();
+    const tomorrow = new Date(currentDate);
+    // tomorrow.setDate(currentDate.getDate() + 1); // Get tomorrow's date
+    tomorrow.setDate(currentDate.getDate());
+
+    // Check if tomorrow is Sunday (day of the week === 0)
+    if (tomorrow.getDay() === 0) {
+        tomorrow.setDate(currentDate.getDate() + 2); // If tomorrow is Sunday, get Monday's date
+    }
+
+    return tomorrow;
+};
+
+export const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Add leading zero if necessary
+    const day = ("0" + date.getDate()).slice(-2); // Add leading zero if necessary
+    return `${year}-${month}-${day}`;
+};
+export const formatDate2 = (date) => {
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // Add leading zero if necessary
+    const day = ("0" + date.getDate()).slice(-2); // Add leading zero if necessary
+    return `${day}-${month}-${year}`;
+};
+
+export function formatDateForInput(dateString) {
+    const dateObject = new Date(dateString);
+    const formattedDate = dateObject.toISOString().split('T')[0];
+    return formattedDate;
+}
