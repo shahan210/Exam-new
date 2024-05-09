@@ -140,7 +140,7 @@ export default function Exams() {
     };
 
     const handleAddQuestion = () => {
-        navigate(`/exam_master/add-new`, {
+        navigate(`/exam_master/add-new-ques`, {
             state: {
                 id: selectedQuestionTestID,
             },
@@ -148,7 +148,7 @@ export default function Exams() {
     };
 
     const handleViewQuestion = () => {
-        navigate(`/exam_master/edit-new`, {
+        navigate(`/exam_master/edit-exam-info`, {
             state: {
                 id: selectedQuestionTestID,
             },

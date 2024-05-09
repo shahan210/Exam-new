@@ -9,12 +9,14 @@ import connectToDatabase from "./middleware/db.connection.js";
 
 dotenv.config();
 const app = express();
+app.use(express.json({ limit: "30mb", extended: true }));
+app.use(express.static("uploads"));
+
 const port = 4040;
+
 app.use(cors({ origin: ["http://localhost:3000", "http://localhost:5173", "*"] }));
 connectToDatabase();
 app.use(express.json());
-
-
 
 // Routes
 app.use("/api/v1/", SubjectRoute);
