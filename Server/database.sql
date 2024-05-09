@@ -111,3 +111,16 @@ CREATE TABLE adminusersubjects (
     LoginID INT NOT NULL,
     ClassId INT NOT NULL
 );
+
+CREATE TABLE questionimages (
+    imageId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    QuestionBankID INT NOT NULL,
+    fileName VARCHAR(100) NOT NULL,
+    pathName VARCHAR(100) NOT NULL, 
+    originalName VARCHAR(100) NOT NULL, 
+    AddedDate VARCHAR(20),
+    AddedBy VARCHAR(50),
+    ModifiedDate VARCHAR(20),
+    ModifiedBy VARCHAR(50),
+)
+

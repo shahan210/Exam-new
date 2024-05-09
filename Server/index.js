@@ -10,11 +10,11 @@ import connectToDatabase from "./middleware/db.connection.js";
 dotenv.config();
 const app = express();
 const port = 4040;
-app.use(
-  cors({ origin: ["http://localhost:3000", "http://localhost:5173", "*"] })
-);
+app.use(cors({ origin: ["http://localhost:3000", "http://localhost:5173", "*"] }));
 connectToDatabase();
 app.use(express.json());
+
+
 
 // Routes
 app.use("/api/v1/", SubjectRoute);
@@ -23,5 +23,5 @@ app.use("/api/v1/", UserRoute);
 app.use("/api/v1/", ExamRouter);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+    console.log(`Example app listening on port ${port}`);
 });

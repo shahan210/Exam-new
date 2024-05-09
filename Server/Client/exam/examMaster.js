@@ -312,15 +312,8 @@ export const newQuestionMaster = async (req, res) => {
 
 export const createdQuestionMaster = async (req, res) => {
     const data = req.body;
-    console.log(JSON.parse(data.data), "data");
     const quesData = JSON.parse(data.data);
-
     const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-    // const pa = JSON.parse(data.data);
-    // const dateStr = new Date(pa.ExamDateStr);
-    // const dated = new Date(dateStr);
-    // const formattedDate = dated.toISOString().slice(0, 19).replace("T", " ");
 
     try {
         const response = await pool.query(
@@ -405,6 +398,50 @@ export const createdQuestionMaster = async (req, res) => {
                 quesData.Image,
             ]
         );
+        if (response.length > 0) {
+            res.json({
+                data: [
+                    {
+                        ActionType: "",
+                        ErrorMessage: "",
+                        ErrorCode: "",
+                        JSONData1: [response],
+                        JSONData2: [],
+                        JSONData3: [],
+                        JSONData4: [],
+                        JSONData5: [],
+                        JSONData1Remarks: "",
+                        JSONData2Remarks: "",
+                        JSONData3Remarks: "",
+                        JSONData4Remarks: "",
+                        JSONData5Remarks: "",
+                    },
+                ],
+                message: "successfull",
+                status: 200,
+            });
+        } else {
+            res.status(200).json({
+                data: [
+                    {
+                        ActionType: "",
+                        ErrorMessage: "",
+                        ErrorCode: "",
+                        JSONData1: [response],
+                        JSONData2: [],
+                        JSONData3: [],
+                        JSONData4: [],
+                        JSONData5: [],
+                        JSONData1Remarks: "",
+                        JSONData2Remarks: "",
+                        JSONData3Remarks: "",
+                        JSONData4Remarks: "",
+                        JSONData5Remarks: "",
+                    },
+                ],
+                message: "no data found",
+            });
+        }
     } catch (error) {
         console.log(error);
     }
@@ -755,3 +792,8 @@ export const updateQuizMasterEditInfo = async (req, res) => {
         console.log(error);
     }
 };
+
+
+export const UploadImages = async (req, res) => {
+    console.log(req.body);
+}
