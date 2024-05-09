@@ -105,9 +105,23 @@ CREATE TABLE questionbankmst (
     Video VARCHAR(500),
     Image VARCHAR(500)
 );
+
 CREATE TABLE adminusersubjects (
     UsrSubjID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     SubjectID INT NOT NULL, 
     LoginID INT NOT NULL,
     ClassId INT NOT NULL
 );
+
+CREATE TABLE questionimages (
+    imageId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    QuestionBankID INT NOT NULL,
+    fileName VARCHAR(100) NOT NULL,
+    pathName VARCHAR(100) NOT NULL, 
+    originalName VARCHAR(100) NOT NULL, 
+    AddedDate VARCHAR(20),
+    AddedBy VARCHAR(50),
+    ModifiedDate VARCHAR(20),
+    ModifiedBy VARCHAR(50),
+)
+
