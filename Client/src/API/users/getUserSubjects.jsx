@@ -1,14 +1,18 @@
 import React from "react";
 import api from "../post.jsx";
-export const getSubjectTable = async () => {
+
+const getUserSubjectsClass = async (login) => {
   let userData = [];
+  console.log(login);
   try {
-    const result = await api.get("/subjects");
+    const result = await api.get(`/usersubject/${login}`);
+    console.log(result);
     userData = result?.map((item) => item.JSONData1);
-    // console.log(userData);
     return userData;
   } catch (error) {
     console.log("errorr");
     console.log(error);
   }
 };
+
+export default getUserSubjectsClass;
