@@ -1,7 +1,7 @@
 import api from "../post.jsx";
 import React from "react";
 
-const getUserEdit = async (data, id) => {
+const getUserEdit = async (data, selected, id) => {
   let userData = [];
   const getuser = JSON.parse(localStorage.getItem("user"));
   const UserDetails = {
@@ -10,14 +10,14 @@ const getUserEdit = async (data, id) => {
     UserType: data.UserType,
     EmailID: data.EmailID,
     PhNo: data.PhNo,
-    RightsDetails: data.RightsDetails,
+    RightsDetails: selected.join(","),
     UserLocation: data.UserLocation,
     ModifiedBy: getuser.UserName,
   };
   try {
     const result = await api.put(`/user/${id}`, UserDetails);
     userData = result?.map((item) => item.JSONData1);
-    console.log(userData);
+    // console.log(userData);
     return userData;
   } catch (error) {
     console.log("errorr");

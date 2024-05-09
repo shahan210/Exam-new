@@ -54,10 +54,12 @@ const Dashboard = () => {
             </a>
           </div>
           <div className="bg-white transition duration-300 w-36 h-48  xl:w-48 ease-in-out transform hover:scale-105 p-6 rounded-md shadow-md text-center">
-            <div className="mb-4 flex justify-center">
-              <img src={Users} alt="subject master" className=" w-24" />
-            </div>{" "}
-            <h3 className="xl:text-lg text-md font-semibold mb-2">Users</h3>
+            <a href="/user_master">
+              <div className="mb-4 flex justify-center">
+                <img src={Users} alt="subject master" className=" w-24" />
+              </div>{" "}
+              <h3 className="xl:text-lg text-md font-semibold mb-2">Users</h3>
+            </a>
           </div>
           <div className="">
             <a

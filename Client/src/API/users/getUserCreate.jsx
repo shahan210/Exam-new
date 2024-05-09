@@ -1,17 +1,16 @@
 import api from "../post.jsx";
 import React from "react";
 
-const getUserCreate = async (data) => {
+const getUserCreate = async (data, selected) => {
   let userData = [];
   const getuser = JSON.parse(localStorage.getItem("user"));
-
   const UserDetails = {
     UserName: data.UserName,
     UserPassword: btoa(data.UserPassword + "password"),
     UserType: data.UserType,
     EmailID: data.EmailID,
     PhNo: data.PhNo,
-    RightsDetails: data.RightsDetails,
+    RightsDetails: selected.join(","),
     AddedBy: getuser.UserName,
     UserLocation: data.UserLocation,
   };
