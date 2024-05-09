@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import getUsers from "../../API/users/getUsers.jsx";
+import { useGlobalContext } from "../../global/GlobalContext.jsx";
 import Layout from "../../global/components/Layout.jsx";
 import Spinner from "../../global/components/Spinner.jsx";
 import UserMasterTable from "./components/UserMasterTable.jsx";
-import { useGlobalContext } from "../../global/GlobalContext.jsx";
-import UserMasterEdit from "./components/UserMasterEdit.jsx";
+import { useNavigate } from "react-router-dom";
 const UserMaster = () => {
   const [UserList, setUserList] = useState();
   const [loading, setLoading] = useState(true);
   const { modalComponent, setModalComponent } = useGlobalContext();
   const [userID, setUserID] = useState();
-
+  const navigate = useNavigate();
   const handleTrue = (id) => {
     setModalComponent(true);
     setUserID(id);
@@ -42,7 +42,11 @@ const UserMaster = () => {
         <div className="shadow-sm shadow-slate-400 w-full rounded p-2 ">
           <div className="flex items-center gap-2">
             <button
-              onClick={() => handleTrue(0)}
+              onClick={() =>
+                navigate("/user_master/create-user", {
+                  state: { id: 0 },
+                })
+              }
               className="p-2 text-center bg-green-500 text-white rounded w-24  hover:scale-105 transition-all ease-in-out duration-100"
             >
               New
