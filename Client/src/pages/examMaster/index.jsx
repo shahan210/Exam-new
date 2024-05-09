@@ -140,8 +140,15 @@ export default function Exams() {
     };
 
     const handleAddQuestion = () => {
-        console.log("hey");
         navigate(`/exam_master/add-new`, {
+            state: {
+                id: selectedQuestionTestID,
+            },
+        });
+    };
+
+    const handleViewQuestion = () => {
+        navigate(`/exam_master/edit-new`, {
             state: {
                 id: selectedQuestionTestID,
             },
@@ -258,7 +265,7 @@ export default function Exams() {
                         <Copy className="mr-2 h-4 w-4" />
                         Copy
                     </Button>
-                    <Button className="flex items-center" disabled={!selected}>
+                    <Button onClick={handleViewQuestion} className="flex items-center" disabled={!selected}>
                         <View className="mr-2 h-4 w-4" />
                         View/Change
                     </Button>

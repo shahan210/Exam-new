@@ -9,6 +9,8 @@ import UserMaster from "./pages/users/UserMaster";
 import ExamMaster from "./pages/examMaster";
 import UserMasterEdit from "./pages/users/UserMasterEdit";
 import AddNewQuestionMaster from "./pages/examMaster/Quiz/addNew";
+import EditQuestion from "./pages/examMaster/Quiz/editQuestion";
+import EditQuestionMaster from "./pages/examMaster/components/editQuestionMaster";
 function App() {
   return (
     <>
@@ -23,6 +25,11 @@ function App() {
             <Route
               path="/exam_master/add-new"
               element={<AddNewQuestionMaster />}
+            />
+            <Route path="/exam_master/edit-new" element={<EditQuestion />} />
+            <Route
+              path="/exam_master/edit-quiz"
+              element={<EditQuestionMaster />}
             />
             <Route path="/user_master" element={<UserMaster />} />
             <Route path="/user_master/edit-user" element={<UserMasterEdit />} />
