@@ -20,9 +20,12 @@ import getExamList from "../../API/examMaster/getExamList";
 import { getSubjectTable } from "../../API/subjectMaster/getSubjectTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../global/GlobalContext";
 
 export default function Exams() {
     const navigate = useNavigate();
+
+    const { loading, setLoading } = useGlobalContext();
 
     const [input, setInput] = useState({
         year: "2023",
@@ -39,7 +42,6 @@ export default function Exams() {
 
     const [selectedQuestionTestID, setSelectedQuestionTestID] = useState(null);
     const [selected, setSelected] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [exam, setExam] = useState([]);
 
     const [classList, setClassList] = useState([]);
@@ -47,6 +49,7 @@ export default function Exams() {
 
     const fetchClassess = async () => {
         try {
+            setLoading(true);
             const result = await getClassTable();
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
@@ -54,9 +57,7 @@ export default function Exams() {
             }));
 
             setClassList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
+            setLoading(false);
         } catch (error) {
             console.log(error);
             toast.error("error");
@@ -65,6 +66,7 @@ export default function Exams() {
 
     const fetchSubjects = async () => {
         try {
+            setLoading(true);
             const result = await getSubjectTable();
 
             const filterClass = result[0]?.map((data) => ({
@@ -72,9 +74,7 @@ export default function Exams() {
                 name: data?.SubjectName,
             }));
             setSubjectList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 300);
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -121,7 +121,8 @@ export default function Exams() {
 
         try {
             const response = await getExamList(input);
-            if (response.length > 0) {
+            console.log(response, "respon");
+            if (response) {
                 setExam(response[0]);
             } else {
                 setExam([]);
@@ -154,6 +155,7 @@ export default function Exams() {
             },
         });
     };
+    console.log(exam, "ss");
 
     return (
         <>
@@ -198,7 +200,10 @@ export default function Exams() {
                                 <Label htmlFor="class" className="md:text-sm text-md">
                                     Class
                                 </Label>
-                                <Select defaultValue={input.className.name} onValueChange={(v) => handleSelect(v, "class")}>
+                                <Select
+                                    defaultValue={input.className.name ? input.className.name : ""}
+                                    onValueChange={(v) => handleSelect(v, "class")}
+                                >
                                     <SelectTrigger id="class" className="w-64">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Class"} />
                                     </SelectTrigger>
@@ -216,17 +221,23 @@ export default function Exams() {
                                 <Label htmlFor="subject" className="md:text-sm text-md">
                                     Subject
                                 </Label>
-                                <Select defaultValue={input.subject.name} onValueChange={(v) => handleSelect(v, "sub")}>
+                                <Select
+                                    defaultValue={input.subject.name ? input.subject.name : ""}
+                                    onValueChange={(v) => handleSelect(v, "sub")}
+                                >
                                     <SelectTrigger id="class" className="w-64">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Subject"} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {subjectList.length > 0 &&
-                                            subjectList.map((subject, ind) => (
-                                                <SelectItem value={subject.name} key={ind}>
-                                                    {subject.name}
-                                                </SelectItem>
-                                            ))}
+                                        {subjectList?.length > 0 &&
+                                            subjectList?.map((subject, ind) => {
+                                                const nameD = subject?.name;
+                                                return (
+                                                    <SelectItem value={nameD} key={ind}>
+                                                        {subject.name}
+                                                    </SelectItem>
+                                                );
+                                            })}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -338,10 +349,10 @@ export default function Exams() {
                                             <TableCell className="px-2 py-2">{data.SubjectName}</TableCell>
                                             <TableCell className="px-2 py-2">{data.ExamDate}</TableCell>
                                             <TableCell className="px-2 py-2">
-                                                <Button asChild>
-                                                    <a href={``}>
+                                                <Button type="button" asChild>
+                                                    <div>
                                                         <Edit className="h-4 w-4 text-blue-500" />
-                                                    </a>
+                                                    </div>
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

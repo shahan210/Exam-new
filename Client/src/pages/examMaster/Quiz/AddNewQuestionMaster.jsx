@@ -196,17 +196,6 @@ const AddNewQuestionMaster = () => {
             console.error("Error fetching exam data:", error);
         }
     }, [id]);
-
-    useEffect(() => {
-        fetchExamIdData();
-        fetchQuestionMaster();
-        setTimeout(() => {
-            if (!id) {
-                navigate(-1);
-            }
-        }, 3000);
-    }, [id, fetchExamIdData, fetchQuestionMaster]);
-
     const fetchClassess = async () => {
         try {
             const result = await getClassTable();
@@ -243,22 +232,32 @@ const AddNewQuestionMaster = () => {
     };
 
     useEffect(() => {
-        if (examData.ClassId && examData.SubjectID) {
-            const filterClass = classList.filter((item) => item.id == examData.ClassId);
-            const filterSub = subjectList.filter((item) => item.id == examData.SubjectID);
-            if (filterClass) {
-                setClassList(filterClass);
-            }
-            if (filterSub) {
-                setSubjectList(filterSub);
-            }
-        }
-    }, [examData]);
-
-    useEffect(() => {
         fetchSubjects();
         fetchClassess();
     }, []);
+
+    useEffect(() => {
+        fetchExamIdData();
+        fetchQuestionMaster();
+        setTimeout(() => {
+            if (!id) {
+                navigate(-1);
+            }
+        }, 3000);
+    }, [id, fetchExamIdData, fetchQuestionMaster, navigate]);
+
+    console.log(subjectList, "sub");
+    console.log(classList, "clas");
+    console.log(examData, "ceeee");
+
+    useEffect(() => {
+        if (examData.ClassId) {
+            setClassList(classList.filter((item) => item.id == examData.ClassId));
+        }
+        if (examData.SubjectID) {
+            setSubjectList(subjectList.filter((item) => item.id == examData.SubjectID));
+        }
+    }, [examData,classList,subjectList]);
 
     const addOptionHandler = () => {
         let nextName = `Answer${questions.length + 1}`;
@@ -269,36 +268,6 @@ const AddNewQuestionMaster = () => {
             setQuestions([...questions, { name: nextName, value: "", isChecked: false }]);
         } else {
             toast.warn("Maximum options allowed is 4");
-        }
-    };
-
-    const handleSelect = (v, val) => {
-        if (val === "class") {
-            const filterData = classList.filter((item) => item.name === v);
-            setInput({
-                ...input,
-                className: {
-                    id: filterData[0]?.id,
-                    name: filterData[0]?.name,
-                },
-            });
-            setResult({
-                ...result,
-                ClassId: filterData[0]?.id,
-            });
-        } else if (val === "sub") {
-            const filterData = subjectList.filter((item) => item.name === v);
-            setInput({
-                ...input,
-                subject: {
-                    id: filterData[0]?.id,
-                    name: filterData[0]?.name,
-                },
-            });
-            setResult({
-                ...result,
-                SubjectID: filterData[0]?.id,
-            });
         }
     };
 
@@ -323,8 +292,6 @@ const AddNewQuestionMaster = () => {
             reader.readAsDataURL(file);
         }
     };
-
-    console.log(questions, "quesssssssssssssssssss;");
 
     const handleHTFileChange = (event) => {
         setHTimg(event.target.files[0]);
@@ -413,7 +380,7 @@ const AddNewQuestionMaster = () => {
             if (HTimg) {
                 const formData = new FormData();
                 formData.append("id", questionId);
-                formData.append("fileName", "");
+                formData.append("fileName", "QuizTittle");
                 formData.append("images", HTimg);
                 const addImages = await uploadQuestionImages(formData);
                 console.log(addImages, "response");
@@ -478,8 +445,8 @@ const AddNewQuestionMaster = () => {
                                 <Label htmlFor="selectClass" className="text-md font-semibold w-28">
                                     Class
                                 </Label>
-                                <Select defaultValue={input.className.name} onValueChange={(v) => handleSelect(v, "class")}>
-                                    <SelectTrigger id="class" className="w-full">
+                                <Select value={classList?.[0]?.name}>
+                                    <SelectTrigger id="selectClass" className="w-full">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Class"} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -496,8 +463,8 @@ const AddNewQuestionMaster = () => {
                                 <Label htmlFor="selectSubject" className="text-md font-semibold w-28">
                                     Subject
                                 </Label>
-                                <Select defaultValue={input.subject.name} onValueChange={(v) => handleSelect(v, "sub")}>
-                                    <SelectTrigger id="class" className="w-full">
+                                <Select value={subjectList?.[0]?.name}>
+                                    <SelectTrigger id="selectSubject" className="w-full">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Subject"} />
                                     </SelectTrigger>
                                     <SelectContent>

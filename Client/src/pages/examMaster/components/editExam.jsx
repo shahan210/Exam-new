@@ -12,12 +12,13 @@ import { getSubjectTable } from "../../../API/subjectMaster/getSubjectTable";
 import createExamMaster from "../../../API/examMaster/createExamMaster";
 import { formatDateForInput } from "../../../utils/helpers";
 import getExamMasterInfo from "../../../API/examMaster/getExamMasterInfo";
+import { useGlobalContext } from "../../../global/GlobalContext";
 // import { useLocation, useNavigate } from "react-router-dom";
 
 export default function EditExam({ examId }) {
     // const location = useLocation();
     const id = examId;
-    console.log(id,'iiiiiiiiiiiiiiid');
+    const { loading, setLoading } = useGlobalContext();
     // const navigate = useNavigate();
 
     const [input, setInput] = useState({
@@ -39,7 +40,6 @@ export default function EditExam({ examId }) {
         },
         term: "",
     });
-    const [loading, setLoading] = useState(true);
 
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
@@ -63,6 +63,7 @@ export default function EditExam({ examId }) {
 
     const fetchExamIdData = useCallback(async () => {
         try {
+            setLoading(true);
             const response = await getExamMasterInfo(id);
             const jsonData1 = response[0]?.[0]?.[0];
             if (response) {
@@ -96,7 +97,9 @@ export default function EditExam({ examId }) {
                         id: data?.SubjectID,
                     },
                 });
+                setLoading(false);
             }
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching exam data:", error);
         }
@@ -104,6 +107,7 @@ export default function EditExam({ examId }) {
 
     const fetchClassess = async () => {
         try {
+            setLoading(true);
             const result = await getClassTable();
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
@@ -111,9 +115,7 @@ export default function EditExam({ examId }) {
             }));
 
             setClassList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
+            setLoading(false);
         } catch (error) {
             console.log(error);
             toast.error("error");
@@ -122,6 +124,7 @@ export default function EditExam({ examId }) {
 
     const fetchSubjects = async () => {
         try {
+            setLoading(true)
             const result = await getSubjectTable();
 
             const filterClass = result[0]?.map((data) => ({
@@ -129,9 +132,7 @@ export default function EditExam({ examId }) {
                 name: data?.SubjectName,
             }));
             setSubjectList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 300);
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -182,7 +183,9 @@ export default function EditExam({ examId }) {
         if (input.className.id === "" || input.subject.id === "") return toast.warn("Please select Class and Subject");
 
         try {
+            setLoading(true)
             const response = await createExamMaster(input);
+            setLoading(false)
             console.log(response, "reult");
         } catch (error) {
             toast.error(`${error}`);

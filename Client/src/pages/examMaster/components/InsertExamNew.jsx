@@ -38,6 +38,7 @@ export default function InsertExams() {
 
     const fetchClassess = async () => {
         try {
+            setLoading(true);
             const result = await getClassTable();
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
@@ -45,9 +46,7 @@ export default function InsertExams() {
             }));
 
             setClassList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
+            setLoading(false);
         } catch (error) {
             console.log(error);
             toast.error("error");
@@ -56,6 +55,7 @@ export default function InsertExams() {
 
     const fetchSubjects = async () => {
         try {
+            setLoading(true);
             const result = await getSubjectTable();
 
             const filterClass = result[0]?.map((data) => ({
@@ -63,9 +63,7 @@ export default function InsertExams() {
                 name: data?.SubjectName,
             }));
             setSubjectList(filterClass);
-            setTimeout(() => {
-                setLoading(false);
-            }, 300);
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -114,11 +112,14 @@ export default function InsertExams() {
         if (input.className.id === "" || input.subject.id === "") return toast.warn("Please select Class and Subject");
 
         try {
+            setLoading(true);
             const response = await createExamMaster(input);
             console.log(response, "reult");
             if (response) {
                 toast.success("successfully Created");
+                setLoading(false);
             }
+            setLoading(false);
         } catch (error) {
             toast.error(`${error}`);
             console.log(error);
