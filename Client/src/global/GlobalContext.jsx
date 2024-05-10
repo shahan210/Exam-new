@@ -12,6 +12,10 @@ export const GlobalProvider = ({ children }) => {
   const [modalComponent, setModalComponent] = useState(false);
   const [login, setLogin] = useState(false);
 
+
+
+
+
   let get = localStorage.getItem("access");
   let token = localStorage.getItem("token");
   const check = () => {

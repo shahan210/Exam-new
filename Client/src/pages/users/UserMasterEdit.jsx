@@ -86,9 +86,18 @@ const UserMasterEdit = () => {
   };
   const getUser = async () => {
     if (id !== 0 && loading) {
+      console.log(1);
+      const rightsString = localStorage.getItem("rights");
+      const rights = rightsString.split(",").map((str) => str.trim());
+      const userID = 1023;
+      if (!rights.includes(userID.toString())) {
+        // toast.warning("Access Denied");
+        navigate("/user_master");
+        return;
+      }
       try {
         const result = await getSpecificUser(id);
-        // console.log(result[0]);
+        console.log(result[0]);
         setSelected(result[0].RightsDetails.split(","));
         setPassword(result[0]?.UserPassword);
         setEditUser(result[0]);
@@ -97,9 +106,19 @@ const UserMasterEdit = () => {
         console.log(error);
         toast.error("error");
       }
+    } else {
+      if (id !== 0 && loading) {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const id = 1022;
+        if (!rights.includes(id.toString())) {
+          // toast.warning("Access Denied");
+          navigate("/user_master");
+          return;
+        }
+      }
     }
   };
-
   const fetchSubjects = async () => {
     if (loading) {
       try {
@@ -127,7 +146,6 @@ const UserMasterEdit = () => {
       toast.error("error");
     }
   };
-
   const fetchUser = async () => {
     try {
       const result = await getUserSubjectsClass(id);
@@ -154,7 +172,6 @@ const UserMasterEdit = () => {
       }, 300);
     } catch (error) {
       console.log(error);
-      toast.error("error");
     }
   };
 

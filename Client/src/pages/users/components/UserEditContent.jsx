@@ -23,6 +23,7 @@ const UserEditContent = ({ getRightSelected, selected, id }) => {
   useEffect(() => {
     getRightsUser();
   }, [loading]);
+  console.log(selected);
   return (
     <div className=" row-span-2">
       <div className="tableDiv !max-h-[830px]">

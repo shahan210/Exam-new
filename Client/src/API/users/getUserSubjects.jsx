@@ -3,7 +3,8 @@ import api from "../post.jsx";
 
 const getUserSubjectsClass = async (login) => {
   let userData = [];
-  console.log(login);
+  const token = localStorage.getItem("token");
+
   try {
     const result = await api.get(`/usersubject/${login}`, {
       headers: { Authorization: "Bearer " + token },

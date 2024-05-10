@@ -6,6 +6,7 @@ import Spinner from "../../global/components/Spinner.jsx";
 import SubjectCreate from "./components/SubjectCreate";
 import SubjectMaterHome from "./components/SubjectMasterTable.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const SubjectMaster = () => {
   const [subjectList, setSubjectList] = useState();
   const [loading, setLoading] = useState(true);
@@ -13,15 +14,39 @@ const SubjectMaster = () => {
   const { modalComponent, setModalComponent } = useGlobalContext();
   const navigate = useNavigate();
   const handleTrue = (id) => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    if (id == 0) {
+      const newSub = 1022;
+      if (!rights.includes(newSub.toString())) {
+        toast.warning("Access Denied");
+        return;
+      }
+    } else {
+      const editSub = 1023;
+      if (!rights.includes(editSub.toString())) {
+        toast.warning("Access Denied");
+        return;
+      }
+    }
     setModalComponent(true);
     setSubjectID(id);
   };
 
   const fetchSubjects = async () => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    const id = 1021;
+    if (!rights.includes(id.toString())) {
+      toast.warning("Access Denied");
+      navigate("/dashboard");
+      return;
+    }
     try {
       const result = await getSubjectTable();
       // console.log(result[0]);
       setSubjectList(result[0]);
+
       setTimeout(() => {
         setLoading(false);
       }, 300);

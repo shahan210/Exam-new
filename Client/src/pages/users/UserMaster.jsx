@@ -18,6 +18,14 @@ const UserMaster = () => {
     setUserID(id);
   };
   const fetchSubjects = async () => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    const id = 1021;
+    if (!rights.includes(id.toString())) {
+      toast.warning("Access Denied");
+      navigate("/dashboard");
+      return;
+    }
     try {
       const result = await getUsers();
       // console.log(result);
