@@ -6,14 +6,18 @@ const Auth = async (data) => {
     UserName: data.UserName,
     UserPassword: btoa(data.UserPassword + "password"),
   };
-  // console.log(hashedPassword);
+  // console.log(UserDetails);
 
   let userData = [];
   try {
     const result = await api.post("/auth", UserDetails);
-    // console.log(result[0]);
-    userData = result[0];
-    return userData;
+    console.log(result[0]);
+    if (result) {
+      let token = localStorage.setItem("token", result[0]?.access);
+      localStorage.setItem("access", "access");
+      userData = result[0];
+      return userData;
+    }
   } catch (error) {
     console.log(error);
     toast.error("error");

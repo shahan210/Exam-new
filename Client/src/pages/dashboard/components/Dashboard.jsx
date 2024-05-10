@@ -3,8 +3,10 @@ import Subject from "../../../assets/png/books.png";
 import Exam from "../../../assets/png/exam.png";
 import Users from "../../../assets/png/team.png";
 import ExamDefinition from "../../../assets/png/data-analytics_6999245.png";
+import Access from "../../../global/components/Access";
 
 const Dashboard = () => {
+
   return (
     <div className="px-4 py-7 w-4/5 md:w-full mx-auto mb-4 flex-1 bg-gray-50">
       <div className="flex justify-between w-full mx-auto min-h-screen">

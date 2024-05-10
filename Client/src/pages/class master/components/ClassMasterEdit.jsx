@@ -39,7 +39,6 @@ const ClassMasterEdit = ({ title, classID }) => {
       toast.success("Updated Successfully");
     } catch (error) {
       console.log(error);
-      toast.error("error");
     }
   };
   const getClass = async () => {
@@ -79,7 +78,6 @@ const ClassMasterEdit = ({ title, classID }) => {
   } else {
     return (
       <ModalComponent title={title}>
-        <ToastContainer />
         <div>
           <div className=" bg-[#EEEEEE] text-black shadow-[rgba(0,0,0,0.24)_0px_3px_8px] rounded p-2 ">
             <div>

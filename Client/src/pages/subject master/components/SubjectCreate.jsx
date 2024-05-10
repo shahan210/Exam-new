@@ -7,18 +7,22 @@ import getSubjectEdit from "../../../API/subjectMaster/getSubjectEdit";
 import getSubjectSpecific from "../../../API/subjectMaster/getSubjectSpecific";
 import { useGlobalContext } from "../../../global/GlobalContext";
 import ModalComponent from "../../../global/components/Modal";
+import { useNavigate } from "react-router-dom";
 
 const SubjectCreate = ({ title, subjectID }) => {
   const [loading, setLoading] = useState(true);
   const { register, handleSubmit, setValue, reset, control } = useForm();
   const [editSubject, setEditSubject] = useState();
   const { modalComponent, setModalComponent } = useGlobalContext();
+  const navigate = useNavigate();
   // create user and add addedd by
   const createSubject = async (data, e) => {
     e.preventDefault();
     try {
       const result = await getSubjectCreate(data);
-      if (result[0][0]?.insertId === undefined) {
+      if (result.message == "Token expired") {
+        navigate("/login");
+      } else if (result[0][0]?.insertId === undefined) {
         return;
       }
       setModalComponent(false);
