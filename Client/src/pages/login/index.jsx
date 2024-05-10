@@ -6,6 +6,7 @@ import Auth from "../../API/login/Auth";
 
 const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [details, setDetails] = useState({
     UserName: "",
     UserPassword: "",
@@ -59,7 +60,7 @@ const LoginPage = () => {
           })[0];
           const rights = result.JSONData1.map((item) => item.RightsDetails);
           localStorage.setItem("user", JSON.stringify(getUserDeatils));
-          localStorage.setItem("rights", JSON.stringify(rights));
+          localStorage.setItem("rights", (rights));
         }
         setSubmitted(false);
       } catch (error) {
@@ -78,10 +79,6 @@ const LoginPage = () => {
             <form className="space-y-6">
               <div className="mb-10">
                 <h3 className="text-3xl font-extrabold">Sign in</h3>
-                <p className="text-sm mt-4">
-                  Sign in to your account and explore a world of possibilities.
-                  Your journey begins here.
-                </p>
               </div>
               <div>
                 <label className="text-sm mb-2 block">User name</label>
@@ -122,7 +119,7 @@ const LoginPage = () => {
                 <div className="relative flex items-center">
                   <input
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     value={details.UserPassword}
                     onChange={(e) =>
@@ -132,6 +129,7 @@ const LoginPage = () => {
                     placeholder="Enter password"
                   />
                   <svg
+                    onClick={() => setShowPassword(!showPassword)}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="#bbb"
                     stroke="#bbb"

@@ -5,6 +5,7 @@ const getUserSubjectsUpdate = async (id, userClass, userSubject) => {
   let userData = [];
   const getClassID = userClass.map((item) => item.ClassId);
   const getSubjectsID = userSubject.map((item) => item.SubjectID);
+  const token = localStorage.getItem("token");
 
   const UserDetails = {
     id: id,
@@ -12,7 +13,6 @@ const getUserSubjectsUpdate = async (id, userClass, userSubject) => {
     class: userClass !== undefined ? getClassID : [],
     headers: { Authorization: "Bearer " + token },
   };
-  console.log(UserDetails);
   try {
     const result = await api.put(`/usersubject`, UserDetails);
     // userData = result?.map((item) => item.JSONData1);

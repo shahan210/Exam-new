@@ -21,17 +21,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Home />} />
               <Route path="/class_master" element={<ClassMaster />} />
-              <Route path="/exam_master" element={<ExamMaster />} />
               <Route path="/subject_master" element={<SubjectMaster />} />
-              <Route
-                path="/exam_master/add-new"
-                element={<AddNewQuestionMaster />}
-              />
-              {/* <Route path="/exam_master/edit-new" element={<EditQuestion />} /> */}
-              <Route
-                path="/exam_master/edit-quiz"
-                element={<EditQuestionMaster />}
-              />
               <Route path="/user_master" element={<UserMaster />} />
               <Route
                 path="/user_master/edit-user"
