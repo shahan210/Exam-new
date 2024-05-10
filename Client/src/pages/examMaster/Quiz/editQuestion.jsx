@@ -19,11 +19,13 @@ import { Label } from "../../../components/ui/label";
 import { useLocation, useNavigate } from "react-router-dom";
 import getExamMasterEditInfo from "../../../API/examMaster/getExamMasterEditInfo";
 import { formatDateForInput } from "../../../utils/helpers";
+import { useGlobalContext } from "../../../global/GlobalContext";
 
 const EditExamDetails = () => {
     const location = useLocation();
     const id = location.state.id;
     const navigate = useNavigate();
+    const { loading, setLoading } = useGlobalContext();
 
     const [examData, setExamData] = useState({
         ALTMTHour: "",
@@ -62,17 +64,15 @@ const EditExamDetails = () => {
         term: "",
     });
     const [result, setResult] = useState([]);
-    console.log(result, "ressssssssssssssul");
-    const [loading, setLoading] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
 
     const fetchExamIdData = useCallback(async () => {
         try {
+            setLoading(true)
             const response = await getExamMasterEditInfo(id);
             const jsonData1 = response[0]?.JSONData1[0]?.[0];
             const jsonData2 = response[0]?.JSONData2[0]?.[0];
-            console.log(jsonData2, "jsondata");
             setResult(jsonData2);
             if (response[0]?.length > 0) {
                 const data = jsonData1;
@@ -104,7 +104,9 @@ const EditExamDetails = () => {
                         id: data?.SubjectID,
                     },
                 });
+                setLoading(false)
             }
+            setLoading(false)
         } catch (error) {
             console.error("Error fetching exam data:", error);
         }
@@ -129,10 +131,18 @@ const EditExamDetails = () => {
                 <h1 className="font-semibold text-xl">Edit Exam</h1>
 
                 <Button asChild>
-                    <a href={`/exam_master/add-new-ques`}>
+                    <button
+                        onClick={() => {
+                            navigate("/exam_master/add-new-ques", {
+                                state: {
+                                    id: id,
+                                },
+                            });
+                        }}
+                    >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add
-                    </a>
+                    </button>
                 </Button>
             </div>
 

@@ -57,12 +57,19 @@ export const getExamMaster = async (req, res) => {
 
 export const getYearClassSubjectWiseList = async (req, res) => {
     const Data = req.body;
-    console.log(Data, "data");
     try {
         const result = await pool.query(
             `SELECT * FROM examdefinitiontmst WHERE AcaYear = ? AND SubjectID = ? AND ClassId = ?;`,
             [Data.year, Data.subject.id, Data.class.id]
         );
+        const selectedClass = await pool.query(`SELECT * FROM classmaster WHERE ClassId = ?;`, [Data.class.id]);
+        const selectedSubject = await pool.query(`SELECT * FROM subjectsmaster WHERE SubjectID = ?;`, [Data.subject.id]);
+        // console.log(result[0][0],'result');
+        const response = [{
+            ...result[0][0],
+            SubjectName: selectedSubject[0][0].SubjectName,
+            ClassName: selectedClass[0][0].QstClass,
+        }];
         if (result[0].length > 0) {
             res.json({
                 data: [
@@ -70,7 +77,7 @@ export const getYearClassSubjectWiseList = async (req, res) => {
                         ActionType: "",
                         ErrorMessage: "",
                         ErrorCode: "",
-                        JSONData1: result[0],
+                        JSONData1: response,
                         JSONData2: [],
                         JSONData3: [],
                         JSONData4: [],
@@ -314,6 +321,7 @@ export const newQuestionMaster = async (req, res) => {
 export const createdQuestionMaster = async (req, res) => {
     const data = req.body;
     const quesData = JSON.parse(data.data);
+    // const quesData = data.data;
     const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
     try {
@@ -399,6 +407,10 @@ export const createdQuestionMaster = async (req, res) => {
                 quesData.Image,
             ]
         );
+        const newQuesId = response[0].insertId;
+        // console.log(newQuesId, "id");
+        const createQuestImage = await pool.query(`INSERT INTO questionimages (QuestionBankID) VALUES(?);`, [newQuesId]);
+        console.log(createQuestImage, "create new image");
         if (response.length > 0) {
             res.json({
                 data: [
@@ -444,7 +456,26 @@ export const createdQuestionMaster = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
+        res.status(204).json({
+            data: [
+                {
+                    ActionType: "",
+                    ErrorMessage: "",
+                    ErrorCode: "",
+                    JSONData1: [error],
+                    JSONData2: [],
+                    JSONData3: [],
+                    JSONData4: [],
+                    JSONData5: [],
+                    JSONData1Remarks: "Error",
+                    JSONData2Remarks: "",
+                    JSONData3Remarks: "",
+                    JSONData4Remarks: "",
+                    JSONData5Remarks: "",
+                },
+            ],
+            message: "Error",
+        });
     }
 };
 
@@ -509,8 +540,7 @@ export const getQuizMasterEditInfo = async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM questionbankmst WHERE QuestionBankID = ?;", [id]);
         const resultImages = await pool.query("SELECT * FROM questionimages WHERE QuestionBankID = ?;", [id]);
-        console.log(resultImages[0], ' images');
-        const images = resultImages[0]
+        const images = resultImages[0];
         if (result.length > 0) {
             res.json({
                 data: [
@@ -659,7 +689,6 @@ export const updateQuizMasterEditInfo = async (req, res) => {
     const data = req.body;
     const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
     const pa = JSON.parse(data.data);
-    console.log(pa, "reunoajsdflk;j");
 
     const updateQuery = `
     UPDATE questionbankmst
@@ -801,6 +830,7 @@ export const UploadImages = async (req, res) => {
         // console.log(req.body, "body,", file.filename);
         try {
             const response = await uploadImage({ body: req.body, file: file });
+            console.log(response, "image added ");
             if (response.length > 0) {
                 res.status(200).json({
                     data: [
