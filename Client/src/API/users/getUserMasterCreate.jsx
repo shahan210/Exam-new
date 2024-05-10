@@ -5,10 +5,13 @@ const getUserMasterCreate = async (id, userClass, userSubject) => {
   let userData = [];
   const getClassID = userClass.map((item) => item.ClassId);
   const getSubjectsID = userSubject.map((item) => item.SubjectID);
+  const token = localStorage.getItem("token");
+
   const UserDetails = {
     id: id,
     subjects: userSubject !== undefined ? getSubjectsID : [],
     class: userClass !== undefined ? getClassID : [],
+    headers: { Authorization: "Bearer " + token },
   };
   console.log(UserDetails);
   try {

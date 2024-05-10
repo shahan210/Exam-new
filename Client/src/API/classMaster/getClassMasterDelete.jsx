@@ -2,6 +2,8 @@ import api from "../post.jsx";
 
 const getClassMasterDelete = async (id) => {
   let userData = [];
+  const token = localStorage.getItem("token");
+
   try {
     const result = await api.delete("/class", {
       id: id,

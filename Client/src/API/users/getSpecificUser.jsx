@@ -9,8 +9,13 @@ const getSpecificUser = async (id) => {
       return { ...cred, UserPassword: encodedPassword };
     });
   }
+  const token = localStorage.getItem("token");
+
   try {
-    const result = await api.get(`/user/${id}`);
+    const result = await api.get(`/user/${id}`, {
+      headers: { Authorization: "Bearer " + token },
+    });
+    console.log(result,id);
     userData = encodePasswords(result?.map((item) => item.JSONData1[0]));
     return userData;
   } catch (error) {

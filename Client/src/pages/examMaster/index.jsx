@@ -48,6 +48,14 @@ export default function Exams() {
     const [subjectList, setSubjectList] = useState([]);
 
     const fetchClassess = async () => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const id = 1551;
+        if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            navigate("/dashboard");
+            return;
+        }
         try {
             setLoading(true);
             const result = await getClassTable();
@@ -65,6 +73,14 @@ export default function Exams() {
     };
 
     const fetchSubjects = async () => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const id = 1551;
+        if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            navigate("/dashboard");
+            return;
+        }
         try {
             setLoading(true);
             const result = await getSubjectTable();

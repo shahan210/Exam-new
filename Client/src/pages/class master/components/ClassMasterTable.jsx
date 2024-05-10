@@ -10,8 +10,6 @@ const ClassMasterTable = ({ classList, handleTrue }) => {
       // const result = await getClassMasterDelete(id);
       toast.success("Deleted Successfully");
     } catch (error) {
-      toast.error("Error");
-
       console.log(error);
     }
   };

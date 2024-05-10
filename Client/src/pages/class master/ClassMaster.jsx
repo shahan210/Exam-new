@@ -7,28 +7,52 @@ import ClassMasterTable from "./components/ClassMasterTable";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "../../global/components/Layout";
+import { useNavigate } from "react-router-dom";
 const ClassMaster = () => {
   const [classList, setClassList] = useState();
   const [loading, setLoading] = useState(true);
   const [classID, setClassID] = useState(0);
   const { modalComponent, setModalComponent } = useGlobalContext();
-
+  const navigate = useNavigate();
   const handleTrue = (id) => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    if (id == 0) {
+      const newSub = 1002;
+      if (!rights.includes(newSub.toString())) {
+        toast.warning("Access Denied");
+        return;
+      }
+    } else {
+      const editSub = 1003;
+      if (!rights.includes(editSub.toString())) {
+        toast.warning("Access Denied");
+        return;
+      }
+    }
     setModalComponent(true);
     setClassID(id);
   };
 
   const fetchClassess = async () => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    const id = 1001;
+    if (!rights.includes(id.toString())) {
+      toast.warning("Access Denied");
+      navigate("/dashboard");
+      return;
+    }
     try {
       const result = await getClassTable();
       // console.log(result);
       setClassList(result[0]);
+
       setTimeout(() => {
         setLoading(false);
       }, 300);
     } catch (error) {
       console.log(error);
-      toast.error("error");
     }
   };
   useEffect(() => {
