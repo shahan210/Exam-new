@@ -1,15 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Auth from "../../API/login/Auth";
-import { object, string } from "yup";
-
-let userSchema = object({
-  UserName: string().required(),
-  UserPassword: string().required(),
-  year: string().required(),
-});
 
 const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -44,6 +37,7 @@ const LoginPage = () => {
       return;
     } else {
       try {
+        // console.log(details);
         const result = await Auth(details);
         if (result.JSONData1.length === 0) {
           toast.error("User not found. Try again");

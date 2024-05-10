@@ -1,4 +1,10 @@
 const Sidebar = () => {
+  const clearAll = () => {
+    const clearToken = localStorage.removeItem("token");
+    const clearUser = localStorage.removeItem("user");
+    const clearRights = localStorage.removeItem("rights");
+    const clearAccess = localStorage.removeItem("access");
+  };
   return (
     <aside className="min-h-full md:w-72 max-h-screen h-[100vh] fixed p-6 border-r hidden md:block bg-gray-800 text-white">
       <ul className="space-y-2 mt-[30px]">
@@ -120,7 +126,7 @@ const Sidebar = () => {
           </a>
         </li>
         <li>
-          <a href="/">
+          <a onClick={() => clearAll()} href="/">
             <button className="menu--button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

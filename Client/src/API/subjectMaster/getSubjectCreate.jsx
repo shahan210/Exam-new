@@ -3,6 +3,7 @@ import api from "../post.jsx";
 
 const getSubjectCreate = async (data) => {
   const getuser = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
   let userData = [];
   try {
     const result = await api.post("/subjects", {
@@ -10,8 +11,14 @@ const getSubjectCreate = async (data) => {
       QDescription: data.QDescription,
       AddedBy: getuser.UserName,
       IsActive: data.IsActive,
+      headers: { Authorization: "Bearer " + token },
     });
-    userData = result?.map((item) => item.JSONData1);
+    console.log(result);
+    if (result.message == "Token expired") {
+      userData = result;
+    } else {
+      userData = result?.map((item) => item.JSONData1);
+    }
     return userData;
   } catch (error) {
     console.log("errorr");

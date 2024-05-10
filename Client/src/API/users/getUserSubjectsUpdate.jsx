@@ -10,6 +10,7 @@ const getUserSubjectsUpdate = async (id, userClass, userSubject) => {
     id: id,
     subjects: userSubject !== undefined ? getSubjectsID : [],
     class: userClass !== undefined ? getClassID : [],
+    headers: { Authorization: "Bearer " + token },
   };
   console.log(UserDetails);
   try {

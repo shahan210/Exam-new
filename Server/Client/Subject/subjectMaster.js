@@ -1,7 +1,10 @@
+import { verifyJwt } from "../../Authentication/Authenticate.js";
 import pool from "../../Config/config.js";
 
 // get all
 export const subjectGet = async (req, res) => {
+  // console.log(req.headers.authorization);
+  // console.log(bearer);
   try {
     const result = await pool.query("SELECT * FROM subjectsmaster");
     if (result[0].length > 0) {

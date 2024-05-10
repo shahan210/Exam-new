@@ -28,7 +28,6 @@ const ClassMaster = () => {
       }, 300);
     } catch (error) {
       console.log(error);
-      toast.error("error");
     }
   };
   useEffect(() => {

@@ -5,12 +5,13 @@ import Layout from "../../global/components/Layout.jsx";
 import Spinner from "../../global/components/Spinner.jsx";
 import SubjectCreate from "./components/SubjectCreate";
 import SubjectMaterHome from "./components/SubjectMasterTable.jsx";
+import { useNavigate } from "react-router-dom";
 const SubjectMaster = () => {
   const [subjectList, setSubjectList] = useState();
   const [loading, setLoading] = useState(true);
   const [subjectID, setSubjectID] = useState(0);
   const { modalComponent, setModalComponent } = useGlobalContext();
-
+  const navigate = useNavigate();
   const handleTrue = (id) => {
     setModalComponent(true);
     setSubjectID(id);
