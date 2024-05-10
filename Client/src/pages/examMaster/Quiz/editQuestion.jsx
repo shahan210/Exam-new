@@ -20,7 +20,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import getExamMasterEditInfo from "../../../API/examMaster/getExamMasterEditInfo";
 import { formatDateForInput } from "../../../utils/helpers";
 
-const EditQuestion = () => {
+const EditExamDetails = () => {
     const location = useLocation();
     const id = location.state.id;
     const navigate = useNavigate();
@@ -129,7 +129,7 @@ const EditQuestion = () => {
                 <h1 className="font-semibold text-xl">Edit Exam</h1>
 
                 <Button asChild>
-                    <a href={`/exam_master/add-new`}>
+                    <a href={`/exam_master/add-new-ques`}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add
                     </a>
@@ -193,7 +193,7 @@ const EditQuestion = () => {
                                             className="bg-green-500 pxX-6 py-2 rounded-md text-white"
                                             onClick={
                                                 () =>
-                                                    navigate(`/exam_master/edit-quiz`, {
+                                                    navigate(`/exam_master/edit-quiz-info`, {
                                                         state: {
                                                             examId: id,
                                                             quizId: question.QuestionBankID,
@@ -273,4 +273,4 @@ const EditQuestion = () => {
     );
 };
 
-export default EditQuestion;
+export default EditExamDetails;

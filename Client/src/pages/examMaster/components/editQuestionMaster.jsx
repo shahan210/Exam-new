@@ -3,7 +3,7 @@ import Layout from "../../../global/components/Layout";
 import { Label } from "../../../components/ui/label";
 import { Input } from "../../../components/ui/input";
 import { Checkbox } from "../../../components/ui/checkbox";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getSubjectTable } from "../../../API/subjectMaster/getSubjectTable";
 import getClassTable from "../../../API/classMaster/getClassTable";
 import { toast } from "react-toastify";
@@ -27,6 +27,7 @@ const EditQuestionMaster = () => {
     const [quizData, setQuizData] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState([]);
     const [examData, setExamData] = useState({
         ALTMTHour: "",
         ALTMTMin: "",
@@ -87,6 +88,9 @@ const EditQuestionMaster = () => {
         try {
             const response = await getQuizMasterEditInfo(quizid);
             const quizInfo = response[0].JSONData1[0]?.[0]?.[0];
+            const quizImages = response[0].JSONData2[0];
+            console.log(quizImages, "images");
+            setImage(quizImages);
 
             const answerObjects = Object.entries(quizInfo)
                 .filter(([key, _]) => key.startsWith("Answer"))
@@ -167,12 +171,11 @@ const EditQuestionMaster = () => {
             <>
                 <div className="w-full">
                     <div className="flex justify-between">
-
-                    <Button onClick={() => navigate(-1)}>
-                        <ChevronLeft className="mr-2 h-4 w-4" />
-                        Back
-                    </Button>
-                    <h3 className="font-semibold md:text-xl">Edit</h3>
+                        <Button onClick={() => navigate(-1)}>
+                            <ChevronLeft className="mr-2 h-4 w-4" />
+                            Back
+                        </Button>
+                        <h3 className="font-semibold md:text-xl">Edit</h3>
                     </div>
 
                     <div className="w-full">
@@ -282,6 +285,18 @@ const EditQuestionMaster = () => {
                                     name="QuestionDesc02"
                                 />
                             </div>
+                            {image.length > 0 &&
+                                image.map((data, ind) => {
+                                    const imageUrl = `http://localhost:4040/${data.fileName}`;
+                                    console.log(imageUrl, "url");
+                                    return (
+                                        <React.Fragment key={ind}>
+                                            <div>
+                                                <img src={imageUrl} className="size-10" alt={data.imageId} />
+                                            </div>
+                                        </React.Fragment>
+                                    );
+                                })}
                             <div className="border p-4 py-4 space-y-4 rounded-md">
                                 <div className="flex flex-col gap-2">
                                     {answers?.Answer1 && (

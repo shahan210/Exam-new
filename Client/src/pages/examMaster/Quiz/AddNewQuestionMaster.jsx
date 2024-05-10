@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, ImagePlus, X } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import Layout from "../../../global/components/Layout";
 import { Label } from "../../../components/ui/label";
@@ -15,6 +15,7 @@ import getExamMasterInfo from "../../../API/examMaster/getExamMasterInfo";
 import { formatDateForInput } from "../../../utils/helpers";
 import getQuestionMaster from "../../../API/examMaster/getQuestionMaster";
 import createdQuestionMaster from "../../../API/examMaster/createdQuestionMaster";
+import uploadQuestionImages from "../../../API/examMaster/uploadQuestionImages";
 
 const AddNewQuestionMaster = () => {
     const location = useLocation();
@@ -24,6 +25,8 @@ const AddNewQuestionMaster = () => {
     const [loading, setLoading] = useState(true);
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
+    const [HTimg, setHTimg] = useState(null);
+    const [HTimgPreview, setHTimgPreview] = useState(null);
     const [result, setResult] = useState({
         QuestionBankID: "",
         QuestionTestID: id,
@@ -95,7 +98,7 @@ const AddNewQuestionMaster = () => {
         term: "",
     });
 
-    const [questions, setQuestions] = useState([{ name: "Answer1", value: "", isChecked: false }]);
+    const [questions, setQuestions] = useState([{ name: "Answer1", value: "", img: "", imgPreview: "", isChecked: false }]);
 
     const fetchExamIdData = useCallback(async () => {
         try {
@@ -305,9 +308,46 @@ const AddNewQuestionMaster = () => {
         setQuestions(values);
     };
 
+    const handleFileChange = (event, index) => {
+        const values = [...questions];
+        values[index].img = event.target.files[0];
+        const file = event.target.files[0];
+        setQuestions(values);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const updatedValues = [...values];
+                updatedValues[index].imgPreview = reader.result;
+                setQuestions(updatedValues);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    console.log(questions, "quesssssssssssssssssss;");
+
+    const handleHTFileChange = (event) => {
+        setHTimg(event.target.files[0]);
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setHTimgPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleRemoveOption = (index) => {
         const values = [...questions];
         values[index].value = "";
+        setQuestions(values);
+    };
+
+    const handleRemoveImage = (index) => {
+        const values = [...questions];
+        values[index].img = "";
+        values[index].imgPreview = "";
         setQuestions(values);
     };
 
@@ -349,15 +389,43 @@ const AddNewQuestionMaster = () => {
     const handleSubmission = async (e) => {
         e.preventDefault();
 
-        console.log(result, "result");
-        console.log(questions, "data");
+        // console.log(result, "result");
+        // console.log(questions, "data");
         if (result.RightAnswer === "") return toast.warn("Choose a right answer");
 
         try {
             const response = await createdQuestionMaster(result);
-            console.log(response);
+            // console.log(response, "response");
+            const questionId = response[0]?.[0]?.insertId;
+            if (questions.length > 0) {
+                questions?.forEach(async (data) => {
+                    const formData = new FormData();
+                    if (data?.img) {
+                        formData.append("id", questionId);
+                        formData.append("fileName", data.name);
+                        formData.append("images", data.img);
+                        const addImages = await uploadQuestionImages(formData);
+                        console.log(addImages, "response");
+                    }
+                });
+            }
+
+            if (HTimg) {
+                const formData = new FormData();
+                formData.append("id", questionId);
+                formData.append("fileName", "");
+                formData.append("images", HTimg);
+                const addImages = await uploadQuestionImages(formData);
+                console.log(addImages, "response");
+            }
+
             if (response) {
-                toast.success("success");
+                toast.success("successfully created");
+                navigate("/exam_master/edit-exam-info", {
+                    state: {
+                        id: id,
+                    },
+                });
             }
         } catch (error) {
             console.log(error);
@@ -483,18 +551,48 @@ const AddNewQuestionMaster = () => {
                                     className="border p-2 w-full"
                                 />
                             </div>
-                            <div className="flex items-center">
-                                <Label htmlFor="questionDesc02" className="text-md font-semibold w-48">
+                            <div className="flex items-center space-x-2">
+                                <Label htmlFor="Question1" className="text-md font-semibold w-48">
                                     Question Title
                                 </Label>
+
                                 <Input
                                     type="text"
-                                    name="QuestionDesc02"
+                                    name="Question1"
                                     value={result?.Question1}
                                     onChange={(e) => setResult({ ...result, Question1: e.target.value })}
                                     className="border p-2 w-full"
                                 />
+                                <Label htmlFor={`file-input`} className="w-fit h-full">
+                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                        <ImagePlus className="h-4 w-4" />
+                                    </div>
+                                </Label>
+                                <Input
+                                    id={`file-input`}
+                                    type="file"
+                                    onChange={(e) => handleHTFileChange(e)}
+                                    name="images"
+                                    className="hidden"
+                                    accept="image/*"
+                                ></Input>
                             </div>
+                            {HTimg && (
+                                <div className="flex justify-start">
+                                    <div className="flex relative">
+                                        <button
+                                            onClick={() => {
+                                                setHTimg("");
+                                                setHTimgPreview("");
+                                            }}
+                                            className="top-0 right-0 absolute bg-red-500 -mt-5 w-fit h-fit"
+                                        >
+                                            <X />
+                                        </button>
+                                        <img src={HTimgPreview} className="size-20" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* question title and its title image upload button  */}
@@ -507,45 +605,60 @@ const AddNewQuestionMaster = () => {
                                             <Label className="w-28" htmlFor={`option-${optionIndex}`}>{`Option ${
                                                 optionIndex + 1
                                             }`}</Label>
-                                            <Input
-                                                id={`option-${optionIndex}`}
-                                                name={option.name}
-                                                className={"bg-green-200"}
-                                                value={option.value}
-                                                onChange={(e) => handleInputChange(e, optionIndex)}
-                                            />
-                                            <div className="flex justify-between flex-1 space-x-2 items-center">
-                                                {/* <Label
-                                                    htmlFor={`file-input-${optionIndex}`}
-                                                    // className="w-4 h-4 bg-red-400"
-                                                >
-                                                    <div className="bg-primary text-white p-2 rounded h-10 w-10 inline-flex items-center justify-center cursor-pointer">
-                                                        <ImagePlus className="h-4 w-4" />
+                                            {option.img && (
+                                                <div className="flex justify-start max-w-44 w-fit min-w-32">
+                                                    <div className="flex relative mx-auto">
+                                                        <button
+                                                            onClick={() => {
+                                                                handleRemoveImage(optionIndex);
+                                                            }}
+                                                            className="top-0 right-0 absolute bg-red-500 -mt-5 w-fit h-fit"
+                                                        >
+                                                            <X />
+                                                        </button>
+                                                        <img
+                                                            src={option.imgPreview}
+                                                            alt="lgogogogogog"
+                                                            className="size-20"
+                                                        />
                                                     </div>
-                                                </Label> */}
-
-                                                {/* <Input
-                                                    // value={questions.options[
-                                                    //     optionIndex
-                                                    // ].image?.toString()}
-                                                    id={`file-input-${optionIndex}`}
-                                                    type="file"
-                                                    className="hidden"
-                                                    accept="image/*"
-                                                    // onChange={(e) => handleOptionImageAdd(optionIndex, e)}
-                                                ></Input> */}
-                                                <Button
-                                                    type="button"
-                                                    onClick={() => handleRemoveOption(optionIndex)}
-                                                    variant="destructive"
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                                <Checkbox
-                                                    className="w-7 h-7"
-                                                    checked={option.isChecked}
-                                                    onCheckedChange={() => handleCheckboxChange(optionIndex)}
-                                                />
+                                                </div>
+                                            )}
+                                            <div className="w-full flex space-x-2">
+                                                <div className="justify-between flex-1 space-x-2 items-center flex">
+                                                    <Input
+                                                        id={`option-${optionIndex}`}
+                                                        name={option.name}
+                                                        className={"bg-green-200"}
+                                                        value={option.value}
+                                                        onChange={(e) => handleInputChange(e, optionIndex)}
+                                                    />
+                                                    <Label htmlFor={`file-input-${optionIndex}`} className="w-fit h-full">
+                                                        <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                                            <ImagePlus className="h-4 w-4" />
+                                                        </div>
+                                                    </Label>
+                                                    <Input
+                                                        id={`file-input-${optionIndex}`}
+                                                        type="file"
+                                                        name="images"
+                                                        onChange={(e) => handleFileChange(e, optionIndex)}
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                    ></Input>
+                                                    <Button
+                                                        type="button"
+                                                        onClick={() => handleRemoveOption(optionIndex)}
+                                                        variant="destructive"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                    <Checkbox
+                                                        className="w-7 h-7"
+                                                        checked={option.isChecked}
+                                                        onCheckedChange={() => handleCheckboxChange(optionIndex)}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

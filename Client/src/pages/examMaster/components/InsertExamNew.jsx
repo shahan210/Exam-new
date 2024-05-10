@@ -108,7 +108,6 @@ export default function InsertExams() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(input, "inputs");
         if (input.ExamName === "" || input.ExamHeading === "") return toast.warn("Please add exam name and heading");
         if (input.ALTMTHour === "" || input.ALTMTMin === "") return toast.warn("Please add time");
         if (input.ExamDateStr === "" || input.year === "") return toast.warn("Please add Date & Year");
@@ -116,8 +115,10 @@ export default function InsertExams() {
 
         try {
             const response = await createExamMaster(input);
-            console.log(response,"reult");
-            
+            console.log(response, "reult");
+            if (response) {
+                toast.success("successfully Created");
+            }
         } catch (error) {
             toast.error(`${error}`);
             console.log(error);
@@ -263,9 +264,11 @@ export default function InsertExams() {
                         </div>
                     </div>
                     <DialogFooter className="mt-4">
-                        <Button type="submit">
-                            <Save className="mr-2 h-4 w-4" /> Submit
-                        </Button>
+                        <DialogClose asChild>
+                            <Button type="submit">
+                                <Save className="mr-2 h-4 w-4" /> Submit
+                            </Button>
+                        </DialogClose>
                         <DialogClose asChild>
                             <Button variant="destructive">
                                 <X className="mr-2 h-4 w-4" />

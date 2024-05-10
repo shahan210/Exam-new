@@ -8,8 +8,8 @@ import LoginPage from "./pages/login";
 import UserMaster from "./pages/users/UserMaster";
 import ExamMaster from "./pages/examMaster";
 import UserMasterEdit from "./pages/users/UserMasterEdit";
-import AddNewQuestionMaster from "./pages/examMaster/Quiz/addNew";
-import EditQuestion from "./pages/examMaster/Quiz/editQuestion";
+import AddNewQuestionMaster from "./pages/examMaster/Quiz/AddNewQuestionMaster";
+import EditExamDetails from "./pages/examMaster/Quiz/editQuestion";
 import EditQuestionMaster from "./pages/examMaster/components/editQuestionMaster";
 import PrivateRoute from "./global/components/Access";
 function App() {
@@ -27,7 +27,7 @@ function App() {
                 path="/exam_master/add-new"
                 element={<AddNewQuestionMaster />}
               />
-              <Route path="/exam_master/edit-new" element={<EditQuestion />} />
+              {/* <Route path="/exam_master/edit-new" element={<EditQuestion />} /> */}
               <Route
                 path="/exam_master/edit-quiz"
                 element={<EditQuestionMaster />}
@@ -41,6 +41,21 @@ function App() {
                 path="/user_master/create-user"
                 element={<UserMasterEdit />}
               />
+              {/* unais routes */}
+              <Route path="/exam_master" element={<ExamMaster />} />
+              <Route
+                path="/exam_master/add-new-ques"
+                element={<AddNewQuestionMaster />}
+              />
+              <Route
+                path="/exam_master/edit-exam-info"
+                element={<EditExamDetails />}
+              />
+              <Route
+                path="/exam_master/edit-quiz-info"
+                element={<EditQuestionMaster />}
+              />
+              {/* unais routes */}
             </Route>
             <Route path="/" element={<LoginPage />} />
           </Routes>
