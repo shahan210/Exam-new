@@ -11,7 +11,6 @@ const Auth = async (data) => {
   let userData = [];
   try {
     const result = await api.post("/auth", UserDetails);
-    console.log(result[0]);
     if (result) {
       let token = localStorage.setItem("token", result[0]?.access);
       localStorage.setItem("access", "access");

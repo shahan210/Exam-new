@@ -20,11 +20,15 @@ const UserMaster = () => {
   const fetchSubjects = async () => {
     const rightsString = localStorage.getItem("rights");
     const rights = rightsString.split(",").map((str) => str.trim());
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
     const id = 1021;
-    if (!rights.includes(id.toString())) {
-      toast.warning("Access Denied");
-      navigate("/dashboard");
-      return;
+
+    if (superAdmin.UserType !== 6) {
+      if (!rights.includes(id.toString())) {
+        toast.warning("Access Denied");
+        navigate("/dashboard");
+        return;
+      }
     }
     try {
       const result = await getUsers();

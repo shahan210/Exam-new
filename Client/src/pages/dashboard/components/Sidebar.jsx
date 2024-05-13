@@ -4,6 +4,8 @@ const Sidebar = () => {
     const clearUser = localStorage.removeItem("user");
     const clearRights = localStorage.removeItem("rights");
     const clearAccess = localStorage.removeItem("access");
+    const clearrestriction = localStorage.removeItem("restrictedAccessSubject");
+    const clearRestrictedAccess = localStorage.removeItem("restrictedAccess");
   };
   return (
     <aside className="min-h-full md:w-72 max-h-screen h-[100vh] fixed p-6 border-r hidden md:block bg-gray-800 text-white">

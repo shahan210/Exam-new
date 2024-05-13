@@ -6,6 +6,7 @@ import {
   getSpecificUser,
   getUsers,
   getUsersSubject,
+  importStudentData,
   updateUser,
   updateUserSubjects,
 } from "../../Client/User/UserMaster.js";
@@ -22,5 +23,6 @@ router.post("/auth", authUser);
 router.post("/usersubject", verifyJwt, createUserSubjects);
 router.put("/usersubject", verifyJwt, updateUserSubjects);
 router.get("/usersubject/:id", verifyJwtGet, getUsersSubject);
+router.post("/student", verifyJwt, importStudentData);
 
 export default router;

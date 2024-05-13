@@ -9,7 +9,6 @@ const getUserSubjectsClass = async (login) => {
     const result = await api.get(`/usersubject/${login}`, {
       headers: { Authorization: "Bearer " + token },
     });
-    console.log(result);
     userData = result?.map((item) => item.JSONData1);
     return userData;
   } catch (error) {

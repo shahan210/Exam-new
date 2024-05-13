@@ -16,17 +16,20 @@ const SubjectMaster = () => {
   const handleTrue = (id) => {
     const rightsString = localStorage.getItem("rights");
     const rights = rightsString.split(",").map((str) => str.trim());
-    if (id == 0) {
-      const newSub = 1022;
-      if (!rights.includes(newSub.toString())) {
-        toast.warning("Access Denied");
-        return;
-      }
-    } else {
-      const editSub = 1023;
-      if (!rights.includes(editSub.toString())) {
-        toast.warning("Access Denied");
-        return;
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
+    if (superAdmin.UserType !== 6) {
+      if (id == 0) {
+        const newSub = 1022;
+        if (!rights.includes(newSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
+      } else {
+        const editSub = 1023;
+        if (!rights.includes(editSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
       }
     }
     setModalComponent(true);
@@ -35,23 +38,39 @@ const SubjectMaster = () => {
 
   const fetchSubjects = async () => {
     const rightsString = localStorage.getItem("rights");
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
+
     const rights = rightsString.split(",").map((str) => str.trim());
     const id = 1021;
-    if (!rights.includes(id.toString())) {
-      toast.warning("Access Denied");
-      navigate("/dashboard");
-      return;
+    if (superAdmin.UserType !== 6) {
+      if (!rights.includes(id.toString())) {
+        toast.warning("Access Denied");
+        navigate("/dashboard");
+        return;
+      }
     }
-    try {
-      const result = await getSubjectTable();
-      // console.log(result[0]);
-      setSubjectList(result[0]);
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      console.log(error);
+    if (loading) {
+      try {
+        const restriction = JSON.parse(
+          localStorage.getItem("restrictedAccessSubject")
+        );
+        const admin = localStorage.getItem("restrictedAccess");
+        if (admin == "access") {
+          const result = await getSubjectTable("all");
+          setSubjectList(result[0]);
+        } else if (admin == "denied") {
+          setSubjectList("");
+        } else if (admin == "yes") {
+          const getSubID = restriction?.map((item) => item.SubjectID);
+          const result1 = await getSubjectTable(getSubID);
+          setSubjectList(result1[0]);
+        }
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   useEffect(() => {

@@ -87,12 +87,15 @@ const UserMasterEdit = () => {
   const getUser = async () => {
     if (id !== 0 && loading) {
       const rightsString = localStorage.getItem("rights");
+      const superAdmin = JSON.parse(localStorage.getItem("user"));
       const rights = rightsString.split(",").map((str) => str.trim());
       const userID = 1023;
-      if (!rights.includes(userID.toString())) {
-        // toast.warning("Access Denied");
-        navigate("/user_master");
-        return;
+      if (superAdmin.UserType !== 6) {
+        if (!rights.includes(userID.toString())) {
+          toast.warning("Access Denied");
+          navigate("/user_master");
+          return;
+        }
       }
       try {
         const result = await getSpecificUser(id);
@@ -109,11 +112,14 @@ const UserMasterEdit = () => {
       if (id !== 0 && loading) {
         const rightsString = localStorage.getItem("rights");
         const rights = rightsString.split(",").map((str) => str.trim());
+        const superAdmin = JSON.parse(localStorage.getItem("user"));
         const id = 1022;
-        if (!rights.includes(id.toString())) {
-          // toast.warning("Access Denied");
-          navigate("/user_master");
-          return;
+        if (superAdmin.UserType !== 6) {
+          if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            navigate("/user_master");
+            return;
+          }
         }
       }
     }
@@ -173,7 +179,6 @@ const UserMasterEdit = () => {
       console.log(error);
     }
   };
-
   const getRightSelected = (id) => {
     if (selected !== undefined) {
       const checkDup = selected.filter((item) => item == id);
@@ -297,7 +302,6 @@ const UserMasterEdit = () => {
       setLoading(false);
     }, 300);
   }, [loading]);
-  // console.log(selected);
   useEffect(() => {
     if (editUser) {
       Object.entries(editUser).forEach(([key, value]) => {
@@ -322,7 +326,6 @@ const UserMasterEdit = () => {
     if (x !== undefined && x !== "") {
       const value = x.toLowerCase();
       let startsWithB = (string) => string.toLowerCase().startsWith(value);
-      // console.log(startsWithB);
       let searchusers = classList.filter((user) => startsWithB(user?.QstClass));
       setClassSearch(searchusers);
     } else {

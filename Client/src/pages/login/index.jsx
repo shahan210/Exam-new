@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Auth from "../../API/login/Auth";
+import getUserSubjectsClass from "../../API/users/getUserSubjects";
 
 const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -48,17 +49,37 @@ const LoginPage = () => {
             year: "",
           });
         } else {
-          toast.success("Login successfull");
-          navigate("/dashboard");
           const getUserDeatils = result.JSONData1.map((item) => {
             return {
               EmailID: item.EmailID,
+              LoginID: item.LoginID,
               PhNo: item.PhNo,
               UserLocation: item.UserLocation,
               UserName: item.UserName,
               UserType: item.UserType,
             };
           })[0];
+          console.log(getUserDeatils.UserType);
+          if (getUserDeatils.UserType !== 6) {
+            const result1 = await getUserSubjectsClass(getUserDeatils.LoginID);
+            console.log(result1[0]);
+            if (result1[0].length == 0) {
+              localStorage.setItem("restrictedAccess", "denied");
+            } else {
+              localStorage.setItem(
+                "restrictedAccessSubject",
+                JSON.stringify(result1[0])
+              );
+              localStorage.setItem("restrictedAccess", "yes");
+            }
+          } else {
+            localStorage.setItem("restrictedAccess", "access");
+          }
+          if (getUserDeatils.UserType == 3) {
+            localStorage.setItem("restrictedAccess", "access");
+          }
+          toast.success("Login successfull");
+          navigate("/dashboard");
           const rights = result.JSONData1.map((item) => item.RightsDetails);
           localStorage.setItem("user", JSON.stringify(getUserDeatils));
           localStorage.setItem("rights", rights);
