@@ -8,7 +8,7 @@ import { getSubjectTable } from "../../../API/subjectMaster/getSubjectTable";
 import getClassTable from "../../../API/classMaster/getClassTable";
 import { toast } from "react-toastify";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, ImagePlus, Images, X } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import getExamMasterInfo from "../../../API/examMaster/getExamMasterInfo";
@@ -16,17 +16,19 @@ import { formatDateForInput } from "../../../utils/helpers";
 import getQuizMasterEditInfo from "../../../API/examMaster/editQuestionMaster";
 import updateQuesMaster from "../../../API/examMaster/updateQuesMaster";
 import updateExamMaster from "../../../API/examMaster/updateExamMaster";
+import uploadQuestionImages from "../../../API/examMaster/uploadQuestionImages";
+import { useGlobalContext } from "../../../global/GlobalContext";
 
 const EditQuestionMaster = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const examid = location.state.examId;
+    const { loading, setLoading } = useGlobalContext();
     const quizid = location.state.quizId;
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
     const [quizData, setQuizData] = useState([]);
     const [answers, setAnswers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [image, setImage] = useState([]);
     const [examData, setExamData] = useState({
         ALTMTHour: "",
@@ -49,6 +51,7 @@ const EditQuestionMaster = () => {
 
     const fetchExamIdData = useCallback(async () => {
         try {
+            setLoading(true);
             const response = await getExamMasterInfo(examid);
             const jsonData1 = response[0]?.[0]?.[0];
             if (response) {
@@ -72,7 +75,9 @@ const EditQuestionMaster = () => {
                     QuestionTestID: data?.QuestionTestID || "",
                     SubjectID: data?.SubjectID || "",
                 });
+                setLoading(false);
             }
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching exam data:", error);
         }
@@ -86,11 +91,81 @@ const EditQuestionMaster = () => {
 
     const fetchQuizIdData = useCallback(async () => {
         try {
+            setLoading(true);
             const response = await getQuizMasterEditInfo(quizid);
             const quizInfo = response[0].JSONData1[0]?.[0]?.[0];
             const quizImages = response[0].JSONData2[0];
-            console.log(quizImages, "images");
-            setImage(quizImages);
+            console.log(quizImages[0], "1111111111111");
+            console.log(quizInfo, "222222222222");
+            let combineData = [];
+
+            if (quizInfo.Answer1) {
+                const combine = {
+                    Answer: quizInfo.Answer1,
+                    AnswerTitle: "Answer1",
+                    AnswerImage: quizImages[0]?.Answer1,
+                    updated: false,
+                    newImage: "",
+                    newImgPreview: "",
+                    QuestionBankID: quizImages[0]?.QuestionBankID,
+                    imageId: quizImages?.[0]?.imageId,
+                };
+                combineData.push(combine);
+            }
+            if (quizInfo.Answer2) {
+                const combine = {
+                    Answer: quizInfo.Answer2,
+                    AnswerTitle: "Answer2",
+                    AnswerImage: quizImages[0]?.Answer2,
+                    updated: false,
+                    newImage: "",
+                    newImgPreview: "",
+                    QuestionBankID: quizImages[0]?.QuestionBankID,
+                    imageId: quizImages?.[0]?.imageId,
+                };
+                combineData.push(combine);
+            }
+            if (quizInfo.Answer3) {
+                const combine = {
+                    Answer: quizInfo.Answer3,
+                    AnswerTitle: "Answer3",
+                    AnswerImage: quizImages[0]?.Answer3,
+                    updated: false,
+                    newImage: "",
+                    newImgPreview: "",
+                    QuestionBankID: quizImages[0]?.QuestionBankID,
+                    imageId: quizImages?.[0]?.imageId,
+                };
+                combineData.push(combine);
+            }
+            if (quizInfo.Answer4) {
+                const combine = {
+                    Answer: quizInfo.Answer4,
+                    AnswerTitle: "Answer4",
+                    AnswerImage: quizImages[0]?.Answer4,
+                    updated: false,
+                    newImage: "",
+                    newImgPreview: "",
+                    QuestionBankID: quizImages[0]?.QuestionBankID,
+                    imageId: quizImages?.[0]?.imageId,
+                };
+                combineData.push(combine);
+            }
+            if (quizInfo.Question1) {
+                const combine = {
+                    Answer: quizInfo.Question1,
+                    AnswerTitle: "QuizTittle",
+                    AnswerImage: quizImages[0]?.QuizTittle,
+                    updated: false,
+                    newImage: "",
+                    newImgPreview: "",
+                    QuestionBankID: quizImages[0]?.QuestionBankID,
+                    imageId: quizImages?.[0]?.imageId,
+                };
+                combineData.push(combine);
+            }
+
+            setImage(combineData);
 
             const answerObjects = Object.entries(quizInfo)
                 .filter(([key, _]) => key.startsWith("Answer"))
@@ -102,6 +177,7 @@ const EditQuestionMaster = () => {
             setQuizData(quizInfo);
             setSelectedAnswer(quizInfo.RightAnswer);
             setAnswers(answerObjects);
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching exam data:", error);
         }
@@ -148,19 +224,67 @@ const EditQuestionMaster = () => {
         fetchQuizIdData();
     }, [fetchExamIdData, fetchQuizIdData]);
 
+    const handleFileChange = (event, name) => {
+        const file = event.target.files[0];
+        const updatedArray = image.map((item) => {
+            if (item.AnswerTitle === name) {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const newImgPreview = event.target.result;
+                        setImage((prevState) => {
+                            return prevState.map((prevItem) => {
+                                if (prevItem.AnswerTitle === name) {
+                                    return {
+                                        ...prevItem,
+                                        AnswerImage: "",
+                                        newImage: file,
+                                        updated: true,
+                                        newImgPreview: newImgPreview,
+                                    };
+                                }
+                                return prevItem;
+                            });
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            return item;
+        });
+    };
+
+    useEffect(() => {
+        if (quizData.ClassId) {
+            setClassList(classList.filter((item) => item.id === quizData.ClassId));
+        }
+        if (quizData.SubjectID) {
+            setSubjectList(subjectList.filter((item) => item.id === quizData.SubjectID));
+        }
+    }, [quizData]);
+    // console.log(image, "qixx");
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(quizData, "submission");
-        console.log(examData, "submission");
 
         try {
+            setLoading(true);
             const [updateQues, updateExam] = await Promise.all([updateQuesMaster(quizData), updateExamMaster(examData)]);
-            console.log(updateExam, "exam result");
             if (updateExam.length > 0 && updateQues.length > 0) {
-                toast.success("successfully updated");
+                image.map(async (data) => {
+                    if (data.updated) {
+                        const formData = new FormData();
+                        formData.append("id", data?.QuestionBankID);
+                        formData.append("fileName", data?.AnswerTitle);
+                        formData.append("images", data?.newImage);
+                        const addImages = await uploadQuestionImages(formData);
+                    }
+                });
+                setLoading(false);
                 navigate(-1);
+                toast.success("success");
             }
-            console.log(updateQues, "ques result");
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -221,7 +345,7 @@ const EditQuestionMaster = () => {
                                 <Label className="text-md basis-1/4 font-semibold" htmlFor="selectClass">
                                     Class
                                 </Label>
-                                <Select className="md:basis-3/4 w-full">
+                                <Select value={classList?.[0]?.name} className="md:basis-3/4 w-full">
                                     <SelectTrigger id="class" className="md:basis-3/4 w-full">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Class"} />
                                     </SelectTrigger>
@@ -239,7 +363,7 @@ const EditQuestionMaster = () => {
                                 <Label className="text-md basis-1/4 font-semibold" htmlFor="selectSubject">
                                     Subject
                                 </Label>
-                                <Select className="md:basis-3/4 w-full">
+                                <Select value={subjectList?.[0]?.name} className="md:basis-3/4 w-full">
                                     <SelectTrigger className="md:basis-3/4 w-full" id="class">
                                         <SelectValue placeholder={loading ? "Loading..." : "Choose Subject"} />
                                     </SelectTrigger>
@@ -255,9 +379,38 @@ const EditQuestionMaster = () => {
                             </div>
 
                             <div className="flex justify-between">
-                                <Label htmlFor="question-title" className="text-md basis-1/4 font-semibold">
-                                    Question Title
-                                </Label>
+                                <div className="flex w-full flex-col basis-1/4">
+                                    <Label htmlFor="question-title" className="text-md w-full font-semibold">
+                                        Question Title
+                                    </Label>
+                                    {image.length > 0 &&
+                                        image.map((data) => {
+                                            const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                            return (
+                                                <React.Fragment key={data.AnswerTitle}>
+                                                    {data.AnswerTitle === "QuizTittle" &&
+                                                        (data?.AnswerImage || data?.newImgPreview) && (
+                                                            <div className="flex w-fit flex-row-reverse">
+                                                                <div className="relative">
+                                                                    <button type="button" className="absolute left-0">
+                                                                        <X />
+                                                                    </button>
+                                                                </div>
+                                                                <div>
+                                                                    <img
+                                                                        src={
+                                                                            data.AnswerImage ? imageUrl : data.newImgPreview
+                                                                        }
+                                                                        className="size-20"
+                                                                        alt="aaaaaaaaaaaaaaaa"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                </React.Fragment>
+                                            );
+                                        })}
+                                </div>
                                 <Input
                                     type="text"
                                     value={quizData?.Question1}
@@ -266,6 +419,19 @@ const EditQuestionMaster = () => {
                                     className="md:basis-3/4 w-full"
                                     name="Question1"
                                 />
+                                <Label htmlFor={`file-input`} className="w-fit h-full">
+                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                        <ImagePlus className="h-4 w-4" />
+                                    </div>
+                                </Label>
+                                <Input
+                                    id={`file-input`}
+                                    type="file"
+                                    onChange={(e) => handleFileChange(e, "QuizTittle")}
+                                    name="images"
+                                    className="hidden"
+                                    accept="image/*"
+                                ></Input>
                             </div>
                             <div className="flex justify-between">
                                 <Label className="text-md basis-1/4 font-semibold">QuestionDesc01</Label>
@@ -285,23 +451,46 @@ const EditQuestionMaster = () => {
                                     name="QuestionDesc02"
                                 />
                             </div>
-                            {image.length > 0 &&
-                                image.map((data, ind) => {
-                                    const imageUrl = `http://localhost:4040/${data.fileName}`;
-                                    console.log(imageUrl, "url");
-                                    return (
-                                        <React.Fragment key={ind}>
-                                            <div>
-                                                <img src={imageUrl} className="size-10" alt={data.imageId} />
-                                            </div>
-                                        </React.Fragment>
-                                    );
-                                })}
+
                             <div className="border p-4 py-4 space-y-4 rounded-md">
                                 <div className="flex flex-col gap-2">
                                     {answers?.Answer1 && (
                                         <div className="flex flex-row  space-x-2 items-center justify-between">
-                                            <Label className="w-28">Answer 1</Label>
+                                            <div className="md:basis-1/4">
+                                                <Label className="w-28">Answer 1</Label>
+                                                {image.length > 0 &&
+                                                    image.map((data) => {
+                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        return (
+                                                            <React.Fragment key={data.AnswerTitle}>
+                                                                {data.AnswerTitle === "Answer1" &&
+                                                                    (data?.AnswerImage || data?.newImgPreview) && (
+                                                                        <div className="flex w-fit flex-row-reverse">
+                                                                            <div className="relative">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="absolute left-0"
+                                                                                >
+                                                                                    <X />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div>
+                                                                                <img
+                                                                                    src={
+                                                                                        data.AnswerImage
+                                                                                            ? imageUrl
+                                                                                            : data?.newImgPreview
+                                                                                    }
+                                                                                    className="size-20"
+                                                                                    alt="aaaaaaaaaaaaaaaa"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                            </div>
                                             <Input
                                                 value={quizData?.Answer1}
                                                 onChange={(e) => setQuizData({ ...quizData, Answer1: e.target.value })}
@@ -314,6 +503,19 @@ const EditQuestionMaster = () => {
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
+                                                <Label htmlFor={`Answer1`} className="w-fit h-full">
+                                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                                        <ImagePlus className="h-4 w-4" />
+                                                    </div>
+                                                </Label>
+                                                <Input
+                                                    id={`Answer1`}
+                                                    type="file"
+                                                    onChange={(e) => handleFileChange(e, "Answer1")}
+                                                    name="images"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                ></Input>
                                                 <Checkbox
                                                     onCheckedChange={() => {
                                                         setSelectedAnswer("1");
@@ -327,7 +529,41 @@ const EditQuestionMaster = () => {
                                     )}
                                     {answers?.Answer2 && (
                                         <div className="flex flex-row  space-x-2 items-center justify-between">
-                                            <Label className="w-28">Answer 2</Label>
+                                            <div className="md:basis-1/4">
+                                                <Label className="w-28">Answer 2</Label>
+                                                {image.length > 0 &&
+                                                    image.map((data) => {
+                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        return (
+                                                            <React.Fragment key={data.AnswerTitle}>
+                                                                {data.AnswerTitle === "Answer2" &&
+                                                                    (data?.AnswerImage || data?.newImgPreview) && (
+                                                                        <div className="flex w-fit flex-row-reverse">
+                                                                            <div className="relative">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="absolute left-0"
+                                                                                >
+                                                                                    <X />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div>
+                                                                                <img
+                                                                                    src={
+                                                                                        data.AnswerImage
+                                                                                            ? imageUrl
+                                                                                            : data?.newImgPreview
+                                                                                    }
+                                                                                    className="size-20"
+                                                                                    alt="aaaaaaaaaaaaaaaa"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                            </div>
                                             <Input
                                                 value={quizData?.Answer2}
                                                 onChange={(e) => setQuizData({ ...quizData, Answer2: e.target.value })}
@@ -340,6 +576,19 @@ const EditQuestionMaster = () => {
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
+                                                <Label htmlFor={`Answer2`} className="w-fit h-full">
+                                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                                        <ImagePlus className="h-4 w-4" />
+                                                    </div>
+                                                </Label>
+                                                <Input
+                                                    id={`Answer2`}
+                                                    type="file"
+                                                    onChange={(e) => handleFileChange(e, "Answer2")}
+                                                    name="images"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                ></Input>
                                                 <Checkbox
                                                     onCheckedChange={() => {
                                                         setSelectedAnswer("2");
@@ -353,7 +602,41 @@ const EditQuestionMaster = () => {
                                     )}
                                     {answers?.Answer3 && (
                                         <div className="flex flex-row  space-x-2 items-center justify-between">
-                                            <Label className="w-28">Answer 3</Label>
+                                            <div className="md:basis-1/4">
+                                                <Label className="w-28">Answer 3</Label>
+                                                {image.length > 0 &&
+                                                    image.map((data) => {
+                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        return (
+                                                            <React.Fragment key={data.AnswerTitle}>
+                                                                {data.AnswerTitle === "Answer3" &&
+                                                                    (data?.AnswerImage || data?.newImgPreview) && (
+                                                                        <div className="flex w-fit my-2 flex-row-reverse">
+                                                                            <div className="relative">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="absolute left-0"
+                                                                                >
+                                                                                    <X />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div>
+                                                                                <img
+                                                                                    src={
+                                                                                        data.AnswerImage
+                                                                                            ? imageUrl
+                                                                                            : data?.newImgPreview
+                                                                                    }
+                                                                                    className="size-20"
+                                                                                    alt="aaaaaaaaaaaaaaaa"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                            </div>
                                             <Input
                                                 value={quizData?.Answer3}
                                                 onChange={(e) => setQuizData({ ...quizData, Answer3: e.target.value })}
@@ -366,6 +649,19 @@ const EditQuestionMaster = () => {
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
+                                                <Label htmlFor={`Answer3`} className="w-fit h-full">
+                                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                                        <ImagePlus className="h-4 w-4" />
+                                                    </div>
+                                                </Label>
+                                                <Input
+                                                    id={`Answer3`}
+                                                    type="file"
+                                                    onChange={(e) => handleFileChange(e, "Answer3")}
+                                                    name="images"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                ></Input>
                                                 <Checkbox
                                                     onCheckedChange={() => {
                                                         setSelectedAnswer("3");
@@ -379,7 +675,41 @@ const EditQuestionMaster = () => {
                                     )}
                                     {answers?.Answer4 && (
                                         <div className="flex flex-row  space-x-2 items-center justify-between">
-                                            <Label className="w-28">Answer 4</Label>
+                                            <div className="md:basis-1/4">
+                                                <Label className="w-28">Answer 4</Label>
+                                                {image.length > 0 &&
+                                                    image.map((data) => {
+                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        return (
+                                                            <React.Fragment key={data.AnswerTitle}>
+                                                                {data.AnswerTitle === "Answer4" &&
+                                                                    (data?.AnswerImage || data?.newImgPreview) && (
+                                                                        <div className="flex w-fit flex-row-reverse">
+                                                                            <div className="relative">
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="absolute left-0"
+                                                                                >
+                                                                                    <X />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div>
+                                                                                <img
+                                                                                    src={
+                                                                                        data.AnswerImage
+                                                                                            ? imageUrl
+                                                                                            : data?.newImgPreview
+                                                                                    }
+                                                                                    className="size-20"
+                                                                                    alt="aaaaaaaaaaaaaaaa"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                            </div>
                                             <Input
                                                 value={quizData?.Answer4}
                                                 onChange={(e) => setQuizData({ ...quizData, Answer4: e.target.value })}
@@ -392,6 +722,19 @@ const EditQuestionMaster = () => {
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
+                                                <Label htmlFor={`Answer4`} className="w-fit h-full">
+                                                    <div className="bg-blue-500 text-white p-3 rounded inline-flex items-center justify-center cursor-pointer">
+                                                        <ImagePlus className="h-4 w-4" />
+                                                    </div>
+                                                </Label>
+                                                <Input
+                                                    id={`Answer4`}
+                                                    type="file"
+                                                    onChange={(e) => handleFileChange(e, "Answer4")}
+                                                    name="images"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                ></Input>
                                                 <Checkbox
                                                     onCheckedChange={() => {
                                                         setSelectedAnswer("4");

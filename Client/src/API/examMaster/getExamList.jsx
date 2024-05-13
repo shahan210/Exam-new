@@ -9,7 +9,6 @@ const getExamList = async (data) => {
         class: data?.className,
         subject:data?.subject
       });
-      console.log(result,"result");
       userData = result?.map((item) => item.JSONData1);
       return userData;
     } catch (error) {
