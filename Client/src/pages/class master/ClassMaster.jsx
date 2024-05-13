@@ -17,17 +17,20 @@ const ClassMaster = () => {
   const handleTrue = (id) => {
     const rightsString = localStorage.getItem("rights");
     const rights = rightsString.split(",").map((str) => str.trim());
-    if (id == 0) {
-      const newSub = 1002;
-      if (!rights.includes(newSub.toString())) {
-        toast.warning("Access Denied");
-        return;
-      }
-    } else {
-      const editSub = 1003;
-      if (!rights.includes(editSub.toString())) {
-        toast.warning("Access Denied");
-        return;
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
+    if (superAdmin !== 6) {
+      if (id == 0) {
+        const newSub = 1002;
+        if (!rights.includes(newSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
+      } else {
+        const editSub = 1003;
+        if (!rights.includes(editSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
       }
     }
     setModalComponent(true);
@@ -35,24 +38,52 @@ const ClassMaster = () => {
   };
 
   const fetchClassess = async () => {
-    const rightsString = localStorage.getItem("rights");
-    const rights = rightsString.split(",").map((str) => str.trim());
-    const id = 1001;
-    if (!rights.includes(id.toString())) {
-      toast.warning("Access Denied");
-      navigate("/dashboard");
-      return;
-    }
-    try {
-      const result = await getClassTable();
-      // console.log(result);
-      setClassList(result[0]);
+    if (loading) {
+      const rightsString = localStorage.getItem("rights");
+      const rights = rightsString.split(",").map((str) => str.trim());
+      const superAdmin = JSON.parse(localStorage.getItem("user"));
+      const id = 1001;
 
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    } catch (error) {
-      console.log(error);
+      if (superAdmin !== 6) {
+        if (!rights.includes(id.toString())) {
+          toast.warning("Access Denied");
+          navigate("/dashboard");
+          return;
+        }
+      }
+      try {
+        const restriction = JSON.parse(
+          localStorage.getItem("restrictedAccessSubject")
+        );
+        const admin = localStorage.getItem("restrictedAccess");
+        if (admin == "access") {
+          const result = await getClassTable("all");
+          const classess = result[0].map((item, i) => {
+            return {
+              ...item,
+              id: i + 1,
+            };
+          });
+          setClassList(classess);
+        } else if (admin == "denied") {
+          setClassList("");
+        } else if (admin == "yes") {
+          const getSubID = restriction?.map((item) => item.ClassId);
+          const result1 = await getClassTable(getSubID);
+          const classes = result1[0].map((item, i) => {
+            return {
+              ...item,
+              id: i + 1,
+            };
+          });
+          setClassList(classes);
+        }
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   useEffect(() => {
@@ -61,7 +92,7 @@ const ClassMaster = () => {
 
   return (
     <Layout>
-      <div className="p-2 w-full">
+      <div className="md:p-2 w-full">
         {modalComponent && (
           <ClassMasterEdit
             title={classID == 0 ? "Create New Class" : "Edit Class"}

@@ -3,56 +3,106 @@ import pool from "../../Config/config.js";
 
 // get all
 export const subjectGet = async (req, res) => {
-  // console.log(req.headers.authorization);
-  // console.log(bearer);
+  const getSubjects = req.headers.subjects;
   try {
-    const result = await pool.query("SELECT * FROM subjectsmaster");
-    if (result[0].length > 0) {
-      res.json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "successfull",
-        status: 200,
-      });
-      // console.log(result);
-    } else {
-      res.status(200).json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "no data found",
-      });
+    if (getSubjects !== undefined) {
+      if (getSubjects == "all") {
+        const result = await pool.query("SELECT * FROM subjectsmaster");
+        if (result[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+          // console.log(result);
+        } else {
+          res.status(200).json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "no data found",
+          });
+        }
+      } else {
+        const result1 = await pool.query(
+          `SELECT * FROM subjectsmaster WHERE SubjectID IN (${getSubjects})`
+        );
+        if (result1[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result1[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+        } else {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result1[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "no data found",
+          });
+        }
+      }
     }
-    // console.log(result);
   } catch (error) {
     console.log(error);
   }
