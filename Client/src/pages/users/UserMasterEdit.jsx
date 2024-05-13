@@ -86,7 +86,6 @@ const UserMasterEdit = () => {
   };
   const getUser = async () => {
     if (id !== 0 && loading) {
-      console.log(1);
       const rightsString = localStorage.getItem("rights");
       const rights = rightsString.split(",").map((str) => str.trim());
       const userID = 1023;

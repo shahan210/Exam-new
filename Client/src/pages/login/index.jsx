@@ -56,11 +56,12 @@ const LoginPage = () => {
               PhNo: item.PhNo,
               UserLocation: item.UserLocation,
               UserName: item.UserName,
+              UserType: item.UserType,
             };
           })[0];
           const rights = result.JSONData1.map((item) => item.RightsDetails);
           localStorage.setItem("user", JSON.stringify(getUserDeatils));
-          localStorage.setItem("rights", (rights));
+          localStorage.setItem("rights", rights);
         }
         setSubmitted(false);
       } catch (error) {
