@@ -6,7 +6,6 @@ const getClassTable = async (clsId) => {
   
   try {
     const result = await api.get("/class", {
-      headers: { Authorization: "Bearer " + token },
       headers: { Authorization: "Bearer " + token, class: clsId },
     });
     // console.log(result);
