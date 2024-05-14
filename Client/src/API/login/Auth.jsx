@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { toast } from "react-toastify";
 import api from "../../API/post";
 
@@ -6,7 +7,6 @@ const Auth = async (data) => {
         UserName: data.UserName,
         UserPassword: btoa(data.UserPassword + "password"),
     };
-    // console.log(UserDetails);
 
     let userData = [];
     try {

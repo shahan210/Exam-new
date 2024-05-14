@@ -1,5 +1,7 @@
 import pool from "../../Config/config.js";
-
+import dotenv from "dotenv";
+dotenv.config();
+import axios from "axios";
 export const getUsers = async (req, res) => {
   function encodePasswords(credentials) {
     return credentials.map((cred) => {
@@ -64,6 +66,7 @@ export const getUsers = async (req, res) => {
 export const getRights = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM adminuserrights");
+    console.log(result[0].map((item) => item.id).join(","));
     if (result[0].length > 0) {
       res.json({
         data: [
@@ -120,6 +123,8 @@ export const CreateUser = async (req, res) => {
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const decodedPassword = atob(newData.UserPassword).split("password")[0];
 
+  const getRights = await pool.query("SELECT * FROM adminuserrights");
+  let rights = getRights[0]?.map((item) => item.id)?.join(",");
   try {
     const result = await pool.query(
       "INSERT INTO adminuserlogins (UserName, UserPassword , UserType, EmailID, PhNo,UserLocation, AddedDate, AddedBy, RightsDetails) VALUES (?,?,?,?,?,?,?,?,?);",
@@ -132,7 +137,11 @@ export const CreateUser = async (req, res) => {
         newData.UserLocation,
         Adddate,
         newData.AddedBy,
-        newData.RightsDetails,
+        newData.UserType == 3
+          ? rights
+          : newData.UserType == 6
+          ? rights
+          : newData.RightsDetails,
       ]
     );
     if (result.length > 0) {
@@ -256,6 +265,8 @@ export const updateUser = async (req, res) => {
   const newData = req.body;
   const ModifiedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const decodedPassword = atob(newData.UserPassword).split("password")[0];
+  const getRights = await pool.query("SELECT * FROM adminuserrights");
+  let rights = getRights[0]?.map((item) => item.id)?.join(",");
   try {
     const result = await pool.query(
       "UPDATE adminuserlogins SET UserName = ?, UserPassword = ?, UserType = ?,EmailID = ?, PhNo = ?, UserLocation = ?, ModifiedDate = ?, ModifiedBy = ?, RightsDetails = ? WHERE LoginID = ?;",
@@ -268,7 +279,11 @@ export const updateUser = async (req, res) => {
         newData.UserLocation,
         ModifiedDate,
         newData.ModifiedBy,
-        newData.RightsDetails,
+        newData.UserType == 3
+          ? rights
+          : newData.UserType == 6
+          ? rights
+          : newData.RightsDetails,
         id,
       ]
     );
@@ -549,4 +564,29 @@ export const getUsersSubject = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const importStudentData = async (req, res) => {
+  const url = `${process.env.VITE_IMPORT_BASE}/${process.env.VITE_IMPORT_URL}`;
+
+  const formData = new FormData();
+  formData.append("title", "GetStudentMastersForQB");
+  formData.append("description", "QBStudentMasterList");
+
+  const result = await axios.post(url, formData);
+
+  const intialData = JSON.parse(
+    result.data.substring(0, result.data.indexOf("||JasonEnd", 0))
+  );
+  let studentMaster = JSON.parse(
+    intialData.map((item) =>
+      item.JSONData1.substring(0, result.data.indexOf("||JasonEnd", 0))
+    )
+  );
+  let studentYear = JSON.parse(
+    intialData.map((item) =>
+      item.JSONData2.substring(0, result.data.indexOf("||JasonEnd", 0))
+    )
+  );
+  console.log(studentYear);
 };

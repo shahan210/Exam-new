@@ -26,7 +26,6 @@ export default function Exams() {
     const navigate = useNavigate();
 
     const { loading, setLoading } = useGlobalContext();
-
     const [input, setInput] = useState({
         year: "2023",
         className: {
@@ -39,11 +38,9 @@ export default function Exams() {
         },
         term: "",
     });
-
     const [selectedQuestionTestID, setSelectedQuestionTestID] = useState(null);
     const [selected, setSelected] = useState(false);
     const [exam, setExam] = useState([]);
-
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
 
@@ -58,7 +55,7 @@ export default function Exams() {
         }
         try {
             setLoading(true);
-            const result = await getClassTable();
+            const result = await getClassTable("all");
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
                 name: data?.QstClass,
@@ -67,7 +64,6 @@ export default function Exams() {
             setClassList(filterClass);
             setLoading(false);
         } catch (error) {
-            setLoading(false);
             console.log(error);
             toast.error("error");
         }
@@ -84,7 +80,7 @@ export default function Exams() {
         }
         try {
             setLoading(true);
-            const result = await getSubjectTable();
+            const result = await getSubjectTable("all");
 
             const filterClass = result[0]?.map((data) => ({
                 id: data?.SubjectID,
@@ -93,7 +89,6 @@ export default function Exams() {
             setSubjectList(filterClass);
             setLoading(false);
         } catch (error) {
-            setLoading(false);
             console.log(error);
         }
     };
@@ -106,11 +101,6 @@ export default function Exams() {
     const handleEdit = () => {
         // setShowModal(true);
     };
-
-    // const handleRadioChange = (e) => {
-    //     setSelectedQuestionTestID(Number(e.target.value));
-    //     setSelected(true);
-    // };
 
     const handleSelect = (v, val) => {
         if (val === "class") {
@@ -139,13 +129,11 @@ export default function Exams() {
 
         try {
             const response = await getExamList(input);
-            console.log(response, "respon");
             if (response) {
                 setExam(response[0]);
             } else {
                 setExam([]);
             }
-            console.log(response, "resalksjdflkjhlkj");
         } catch (error) {
             toast.error(`${error}`);
             console.log(error);
@@ -159,14 +147,6 @@ export default function Exams() {
     };
 
     const handleAddQuestion = () => {
-        const rightsString = localStorage.getItem("rights");
-        const rights = rightsString.split(",").map((str) => str.trim());
-        const id = 1502;
-        if (!rights.includes(id.toString())) {
-            toast.warning("Access Denied");
-            navigate("/dashboard");
-            return;
-        }
         navigate(`/exam_master/add-new-ques`, {
             state: {
                 id: selectedQuestionTestID,
@@ -181,7 +161,6 @@ export default function Exams() {
             },
         });
     };
-    console.log(exam, "ss");
 
     return (
         <>
@@ -325,18 +304,6 @@ export default function Exams() {
                         <Delete className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
-
-                {/* {showModal && (
-                <div className="fixed inset-0 z-50 mt-24 customHeightModalNewDepartment opacity-1 flex items-center justify-center">
-                    <div className="bg-white customScrolling relative bottom-3 -mt-5 customHeightModalDepartment shadow-md shadow-gray-100 p-4 rounded-lg text-center border border-gray-300">
-                        <IoMdClose
-                            onClick={closeModal}
-                            className="bg-red-500 absolute top-0 rounded-md right-0 text-white"
-                            size={36}
-                        />
-                    </div>
-                </div>
-            )} */}
 
                 <div className="mt-2 border rounded-sm overflow-hidden">
                     <Table className="min-w-full bg-white border border-gray-300">
