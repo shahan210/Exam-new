@@ -38,52 +38,50 @@ const ClassMaster = () => {
   };
 
   const fetchClassess = async () => {
-    if (loading) {
-      const rightsString = localStorage.getItem("rights");
-      const rights = rightsString.split(",").map((str) => str.trim());
-      const superAdmin = JSON.parse(localStorage.getItem("user"));
-      const id = 1001;
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
+    const id = 1001;
 
-      if (superAdmin !== 6) {
-        if (!rights.includes(id.toString())) {
-          toast.warning("Access Denied");
-          navigate("/dashboard");
-          return;
-        }
+    if (superAdmin !== 6) {
+      if (!rights.includes(id.toString())) {
+        toast.warning("Access Denied");
+        navigate("/dashboard");
+        return;
       }
-      try {
-        const restriction = JSON.parse(
-          localStorage.getItem("restrictedAccessSubject")
-        );
-        const admin = localStorage.getItem("restrictedAccess");
-        if (admin == "access") {
-          const result = await getClassTable("all");
-          const classess = result[0].map((item, i) => {
-            return {
-              ...item,
-              id: i + 1,
-            };
-          });
-          setClassList(classess);
-        } else if (admin == "denied") {
-          setClassList("");
-        } else if (admin == "yes") {
-          const getSubID = restriction?.map((item) => item.ClassId);
-          const result1 = await getClassTable(getSubID);
-          const classes = result1[0].map((item, i) => {
-            return {
-              ...item,
-              id: i + 1,
-            };
-          });
-          setClassList(classes);
-        }
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      } catch (error) {
-        console.log(error);
+    }
+    try {
+      const restriction = JSON.parse(
+        localStorage.getItem("restrictedAccessSubject")
+      );
+      const admin = localStorage.getItem("restrictedAccess");
+      if (admin == "access") {
+        const result = await getClassTable("all");
+        const classess = result[0].map((item, i) => {
+          return {
+            ...item,
+            id: i + 1,
+          };
+        });
+        setClassList(classess);
+      } else if (admin == "denied") {
+        setClassList("");
+      } else if (admin == "yes") {
+        const getSubID = restriction?.map((item) => item.ClassId);
+        const result1 = await getClassTable(getSubID);
+        const classes = result1[0].map((item, i) => {
+          return {
+            ...item,
+            id: i + 1,
+          };
+        });
+        setClassList(classes);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    } catch (error) {
+      console.log(error);
     }
   };
   useEffect(() => {

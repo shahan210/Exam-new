@@ -12,8 +12,13 @@ const getSubjectEdit = async (data, id) => {
       QDescription: data.QDescription,
       ModifiedBy: getuser.UserName,
       IsActive: data.IsActive,
+      SubjectID: id,
       headers: { Authorization: "Bearer " + token },
     });
+    console.log(result);
+    if (result[0].ErrorMessage == "Subject already exists") {
+      return (userData = "Subject exists");
+    }
     userData = result?.map((item) => item.JSONData1);
     console.log(userData);
     return userData;

@@ -127,7 +127,7 @@ const UserMasterEdit = () => {
   const fetchSubjects = async () => {
     if (loading) {
       try {
-        const result = await getSubjectTable();
+        const result = await getSubjectTable("all");
         // console.log(result[0]);
         setSubjectList(result[0]);
         setTimeout(() => {
@@ -140,7 +140,7 @@ const UserMasterEdit = () => {
   };
   const fetchClassess = async () => {
     try {
-      const result = await getClassTable();
+      const result = await getClassTable("all");
       // console.log(result);
       setClassList(result[0]);
       setTimeout(() => {
@@ -154,7 +154,7 @@ const UserMasterEdit = () => {
   const fetchUser = async () => {
     try {
       const result = await getUserSubjectsClass(id);
-      // console.log(result[0]);
+      console.log(result[0]);
       setUserSubjectClass(result[0]);
       const transformedClassData = result[0].map((item, index) => ({
         QstClass: "",
@@ -193,8 +193,8 @@ const UserMasterEdit = () => {
     }
   };
   const getUserSubjects = (i, value) => {
-    const findValue = subjectList.filter((item) => item.SubjectName == value);
-    const subjectIndex = userSubject.findIndex((subject) => subject.id === i);
+    const findValue = subjectList?.filter((item) => item.SubjectName == value);
+    const subjectIndex = userSubject?.findIndex((subject) => subject.id === i);
     if (subjectIndex !== -1) {
       const subjectToUpdate = userSubject[subjectIndex];
 
@@ -219,7 +219,7 @@ const UserMasterEdit = () => {
       }
     }
     if (userSubject !== undefined) {
-      if (findValue.length > 0) {
+      if (findValue?.length > 0) {
         const newSubject = {
           QstClass: "",
           ClassId: "",
@@ -230,7 +230,7 @@ const UserMasterEdit = () => {
         setUserSubject([...userSubject, newSubject]);
       }
     } else {
-      if (findValue.length > 0) {
+      if (findValue?.length > 0) {
         const Subject = {
           QstClass: "",
           classId: "",
@@ -242,7 +242,6 @@ const UserMasterEdit = () => {
       }
     }
   };
-
   const getUserClass = (i, value) => {
     const findValue = classList.filter((item) => item.QstClass == value);
     const subjectIndex = userClass.findIndex((subject) => subject.id === i);
@@ -314,7 +313,7 @@ const UserMasterEdit = () => {
     if (x !== undefined && x !== "") {
       const value = x.toLowerCase();
       let startsWithB = (string) => string.toLowerCase().startsWith(value);
-      let searchusers = subjectList.filter((user) =>
+      let searchusers = subjectList?.filter((user) =>
         startsWithB(user?.SubjectName)
       );
       setSubjectSearch(searchusers);
@@ -341,13 +340,16 @@ const UserMasterEdit = () => {
     const subject =
       userSubjectClass !== undefined &&
       subjectList?.find((subject) => subject.SubjectID === subjectID);
+
     const classID =
       userSubjectClass !== undefined && userSubjectClass[index]
         ? userSubjectClass[index]?.ClassId
         : null;
+
     const classDef =
       userSubjectClass !== undefined &&
       classList?.find((cls) => cls.ClassId === classID);
+
     return (
       <tr className="tableBody-1" key={index}>
         <td className="p-1  text-center">{index + 1}</td>

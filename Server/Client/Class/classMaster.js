@@ -116,26 +116,18 @@ export const CreateClass = async (req, res) => {
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const autoID = Date.now() + Math.random();
   try {
-    const result = await pool.query(
-      "INSERT INTO classmaster (ClAutoId, QstClass , CLNAME, SECNAME,  AddedDate, AddedBy, IsActive) VALUES (?,?,?,?,?,?,?);",
-      [
-        autoID,
-        QstClass,
-        newData.CLNAME,
-        newData.SECNAME,
-        Adddate,
-        newData.AddedBy,
-        newData.IsActive,
-      ]
+    const checkDup = await pool.query(
+      "SELECT * FROM classmaster WHERE QstClass = ?",
+      [QstClass]
     );
-    if (result.length > 0) {
+    if (checkDup.length > 0) {
       res.json({
         data: [
           {
             ActionType: "",
-            ErrorMessage: "",
+            ErrorMessage: "Class already exists",
             ErrorCode: "",
-            JSONData1: [result],
+            JSONData1: [],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -151,27 +143,63 @@ export const CreateClass = async (req, res) => {
         status: 200,
       });
     } else {
-      res.status(200).json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: [result],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "no data found",
-      });
-      console.log(result);
+      const result = await pool.query(
+        "INSERT INTO classmaster (ClAutoId, QstClass , CLNAME, SECNAME,  AddedDate, AddedBy, IsActive) VALUES (?,?,?,?,?,?,?);",
+        [
+          autoID,
+          QstClass,
+          newData.CLNAME,
+          newData.SECNAME,
+          Adddate,
+          newData.AddedBy,
+          newData.IsActive,
+        ]
+      );
+      if (result.length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: [result],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.status(200).json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: [result],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+        });
+        console.log(result);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -243,65 +271,152 @@ export const updateClass = async (req, res) => {
   const newData = req.body;
   const ModifiedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const QstClass = newData.CLNAME + "-" + newData.SECNAME;
-
   try {
-    const result = await pool.query(
-      "UPDATE classmaster SET QstClass = ?, CLNAME = ?, SECNAME = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE ClassId = ?;",
-      [
-        QstClass,
-        newData.CLNAME,
-        newData.SECNAME,
-        ModifiedDate,
-        newData.ModifiedBy,
-        newData.IsActive,
-        id,
-      ]
+    const checkDup = await pool.query(
+      "SELECT * FROM classmaster WHERE QstClass = ?",
+      [QstClass]
     );
-    console.log(result);
-    if (result.length > 0) {
-      res.json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "successfull",
-        status: 200,
-      });
+    if (checkDup[0].length > 0) {
+      if (checkDup[0][0].ClassId === id) {
+        const result = await pool.query(
+          "UPDATE classmaster SET QstClass = ?, CLNAME = ?, SECNAME = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE ClassId = ?;",
+          [
+            QstClass,
+            newData.CLNAME,
+            newData.SECNAME,
+            ModifiedDate,
+            newData.ModifiedBy,
+            newData.IsActive,
+            id,
+          ]
+        );
+        if (result[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+        } else {
+          res.status(200).json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "no data found",
+          });
+          console.log(result[0]);
+        }
+      } else {
+        if (checkDup[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "Class already exists",
+                ErrorCode: "",
+                JSONData1: [],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+        }
+      }
     } else {
-      res.status(200).json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "no data found",
-      });
-      console.log(result[0]);
+      const result1 = await pool.query(
+        "UPDATE classmaster SET QstClass = ?, CLNAME = ?, SECNAME = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE ClassId = ?;",
+        [
+          QstClass,
+          newData.CLNAME,
+          newData.SECNAME,
+          ModifiedDate,
+          newData.ModifiedBy,
+          newData.IsActive,
+          id,
+        ]
+      );
+      if (result1[0].length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result1[0],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.status(200).json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result1[0],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+        });
+      }
     }
   } catch (error) {
     console.log(error);

@@ -20,6 +20,12 @@ const SubjectCreate = ({ title, subjectID }) => {
     e.preventDefault();
     try {
       const result = await getSubjectCreate(data);
+
+      if (result == "Subject exists") {
+        console.log(1);
+        toast.warning("Subject Already exists");
+        return;
+      }
       if (result.message == "Token expired") {
         navigate("/login");
       } else if (result[0][0]?.insertId === undefined) {
@@ -29,7 +35,6 @@ const SubjectCreate = ({ title, subjectID }) => {
       toast.success("Created Successfully");
     } catch (error) {
       console.log(error);
-      toast.error("error");
     }
   };
   const updateSubject = async (data, e) => {
@@ -37,6 +42,9 @@ const SubjectCreate = ({ title, subjectID }) => {
     try {
       const result = await getSubjectEdit(data, subjectID);
       // console.log(result);
+      if (result == "Subject exists") {
+        toast.warning("Subject exists");
+      }
       if (result[0]?.insertId === undefined) {
         return;
       }
@@ -75,7 +83,6 @@ const SubjectCreate = ({ title, subjectID }) => {
   useEffect(() => {
     if (editSubject) {
       Object.entries(editSubject).forEach(([key, value]) => {
-        console.log(key, value);
         setValue(key, value);
       });
     }

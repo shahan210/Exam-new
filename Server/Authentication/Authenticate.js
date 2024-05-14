@@ -9,7 +9,6 @@ export const verifyJwt = async (req, res, next) => {
   } else {
     if (token.startsWith("Bearer")) {
       token = token.slice(7, token.length).trimLeft();
-      console.log(token);
     }
     const verified = jwt.verify(
       token,

@@ -49,28 +49,26 @@ const SubjectMaster = () => {
         return;
       }
     }
-    if (loading) {
-      try {
-        const restriction = JSON.parse(
-          localStorage.getItem("restrictedAccessSubject")
-        );
-        const admin = localStorage.getItem("restrictedAccess");
-        if (admin == "access") {
-          const result = await getSubjectTable("all");
-          setSubjectList(result[0]);
-        } else if (admin == "denied") {
-          setSubjectList("");
-        } else if (admin == "yes") {
-          const getSubID = restriction?.map((item) => item.SubjectID);
-          const result1 = await getSubjectTable(getSubID);
-          setSubjectList(result1[0]);
-        }
-        setTimeout(() => {
-          setLoading(false);
-        }, 300);
-      } catch (error) {
-        console.log(error);
+    try {
+      const restriction = JSON.parse(
+        localStorage.getItem("restrictedAccessSubject")
+      );
+      const admin = localStorage.getItem("restrictedAccess");
+      if (admin == "access") {
+        const result = await getSubjectTable("all");
+        setSubjectList(result[0]);
+      } else if (admin == "denied") {
+        setSubjectList("");
+      } else if (admin == "yes") {
+        const getSubID = restriction?.map((item) => item.SubjectID);
+        const result1 = await getSubjectTable(getSubID);
+        setSubjectList(result1[0]);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    } catch (error) {
+      console.log(error);
     }
   };
   useEffect(() => {

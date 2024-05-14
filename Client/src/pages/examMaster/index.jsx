@@ -1,18 +1,11 @@
-import { Copy, Delete, Edit, Edit2, Plus, PlusCircle, Printer, RefreshCcw, View } from "lucide-react";
+import { Copy, Delete, Edit, Edit2, PlusCircle, Printer, RefreshCcw, View } from "lucide-react";
 import { useState, useEffect } from "react";
 import InsertExamNew from "./components/InsertExamNew";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { Label } from "../../components/ui/label";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "../../components/ui/dialog";
+import ModalComponent from "../../global/components/Modal";
 import Layout from "../../global/components/Layout";
 import getClassTable from "../../API/classMaster/getClassTable";
 import { toast } from "react-toastify";
@@ -25,7 +18,7 @@ import { useGlobalContext } from "../../global/GlobalContext";
 export default function Exams() {
     const navigate = useNavigate();
 
-    const { loading, setLoading } = useGlobalContext();
+    const { loading, setLoading, modalComponent, setModalComponent } = useGlobalContext();
     const [input, setInput] = useState({
         year: "2023",
         className: {
@@ -53,15 +46,30 @@ export default function Exams() {
             navigate("/dashboard");
             return;
         }
+
         try {
             setLoading(true);
-            const result = await getClassTable("all");
-            const filterClass = result[0]?.map((data) => ({
-                id: data?.ClassId,
-                name: data?.QstClass,
-            }));
 
-            setClassList(filterClass);
+            const restriction = JSON.parse(localStorage.getItem("restrictedAccessSubject"));
+            const admin = localStorage.getItem("restrictedAccess");
+            if (admin == "access") {
+                const result = await getClassTable("all");
+                const filterClass = result[0]?.map((data) => ({
+                    id: data?.ClassId,
+                    name: data?.QstClass,
+                }));
+                setClassList(filterClass);
+            } else if (admin == "denied") {
+                setClassList("");
+            } else if (admin == "yes") {
+                const getSubID = restriction?.map((item) => item.ClassId);
+                const result1 = await getClassTable(getSubID);
+                const filterClass = result1[0]?.map((data) => ({
+                    id: data?.ClassId,
+                    name: data?.QstClass,
+                }));
+                setClassList(filterClass);
+            }
             setLoading(false);
         } catch (error) {
             console.log(error);
@@ -80,15 +88,30 @@ export default function Exams() {
         }
         try {
             setLoading(true);
-            const result = await getSubjectTable("all");
 
-            const filterClass = result[0]?.map((data) => ({
-                id: data?.SubjectID,
-                name: data?.SubjectName,
-            }));
-            setSubjectList(filterClass);
+            const restriction = JSON.parse(localStorage.getItem("restrictedAccessSubject"));
+            const admin = localStorage.getItem("restrictedAccess");
+            if (admin == "access") {
+                const result = await getSubjectTable("all");
+                const filterClass = result[0]?.map((data) => ({
+                    id: data?.SubjectID,
+                    name: data?.SubjectName,
+                }));
+                setSubjectList(filterClass);
+            } else if (admin == "denied") {
+                setSubjectList("");
+            } else if (admin == "yes") {
+                const getSubID = restriction?.map((item) => item.SubjectID);
+                const result1 = await getSubjectTable(getSubID);
+                const filterClass = result1[0]?.map((data) => ({
+                    id: data?.SubjectID,
+                    name: data?.SubjectName,
+                }));
+                setSubjectList(filterClass);
+            }
             setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.log(error);
         }
     };
@@ -156,7 +179,7 @@ export default function Exams() {
             toast.warning("Access Denied");
             return;
         }
-        navigate(`/exam_master/add-new-ques`, {
+        navigate("/exam_master/add-new-ques", {
             state: {
                 id: selectedQuestionTestID,
             },
@@ -171,11 +194,34 @@ export default function Exams() {
             toast.warning("Access Denied");
             return;
         }
-        navigate(`/exam_master/edit-exam-info`, {
+        navigate("/exam_master/edit-exam-info", {
             state: {
                 id: selectedQuestionTestID,
             },
         });
+    };
+
+    const handleTrue = (id) => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const superAdmin = JSON.parse(localStorage.getItem("user"));
+
+        if (superAdmin !== 6) {
+            if (id == 0) {
+                const newSub = 1552;
+                if (!rights.includes(newSub.toString())) {
+                    toast.warning("Access Denied");
+                    return;
+                }
+            } else {
+                const editSub = 1003;
+                if (!rights.includes(editSub.toString())) {
+                    toast.warning("Access Denied");
+                    return;
+                }
+            }
+        }
+        setModalComponent(true);
     };
 
     return (
@@ -264,7 +310,7 @@ export default function Exams() {
                             </div>
                         </div>
 
-                        <Button type="button" className={`w-fit`} onClick={handleRefresh}>
+                        <Button type="button" className={"w-fit"} onClick={handleRefresh}>
                             <RefreshCcw className="mr-2 h-4 w-4" />
                             Refresh
                         </Button>
@@ -272,21 +318,24 @@ export default function Exams() {
                 </form>
 
                 <div className="w-full mt-2 px-5 py-4 flex flex-col md:flex-row border rounded-sm space-y-2 md:space-y-0 md:space-x-2">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add New
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Create New Exam</DialogTitle>
-                                <DialogDescription>Enter the form with necessary details</DialogDescription>
-                            </DialogHeader>
-                            <InsertExamNew />
-                        </DialogContent>
-                    </Dialog>
+                    <button
+                        type="button"
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                        onClick={() => handleTrue(0)}
+                    >
+                        {/* <Plus className="mr-2 h-4 w-4" /> */}
+                        Add New
+                    </button>
+                    {modalComponent && (
+                        <ModalComponent title={"Create exam"}>
+                            <div>
+                                <h1 className="text-center">Enter the form with necessary details</h1>
+                                <div className="w-full flex  justify-center">
+                                    <InsertExamNew />
+                                </div>
+                            </div>
+                        </ModalComponent>
+                    )}
 
                     <Button onClick={handleEdit}>
                         <Edit2 className="mr-2 h-4 w-4" />

@@ -13,7 +13,9 @@ const getSubjectCreate = async (data) => {
       IsActive: data.IsActive,
       headers: { Authorization: "Bearer " + token },
     });
-    console.log(result);
+    if (result[0].ErrorMessage == "Subject already exists") {
+      return (userData = "Subject exists");
+    }
     if (result.message == "Token expired") {
       userData = result;
     } else {
