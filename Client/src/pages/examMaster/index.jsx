@@ -67,6 +67,7 @@ export default function Exams() {
             setClassList(filterClass);
             setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.log(error);
             toast.error("error");
         }
@@ -92,6 +93,7 @@ export default function Exams() {
             setSubjectList(filterClass);
             setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.log(error);
         }
     };
@@ -157,6 +159,14 @@ export default function Exams() {
     };
 
     const handleAddQuestion = () => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const id = 1502;
+        if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            navigate("/dashboard");
+            return;
+        }
         navigate(`/exam_master/add-new-ques`, {
             state: {
                 id: selectedQuestionTestID,
