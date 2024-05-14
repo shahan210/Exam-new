@@ -12,6 +12,7 @@ import AddNewQuestionMaster from "./pages/examMaster/Quiz/AddNewQuestionMaster";
 import EditExamDetails from "./pages/examMaster/Quiz/editQuestion";
 import EditQuestionMaster from "./pages/examMaster/components/editQuestionMaster";
 import PrivateRoute from "./global/components/Access";
+import UtilityMaster from "./pages/utility/Index";
 function App() {
   return (
     <>
@@ -31,6 +32,7 @@ function App() {
                 path="/user_master/create-user"
                 element={<UserMasterEdit />}
               />
+              <Route path="/utility" element={<UtilityMaster />} />
               {/* unais routes */}
               <Route path="/exam_master" element={<ExamMaster />} />
               <Route

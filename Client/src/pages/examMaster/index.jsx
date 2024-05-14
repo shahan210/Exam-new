@@ -45,12 +45,13 @@ import {
 } from "../../components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../global/GlobalContext";
+import ModalComponent from "../../global/components/Modal";
 
 export default function Exams() {
   const navigate = useNavigate();
 
   const { loading, setLoading } = useGlobalContext();
-
+  const { modalComponent, setModalComponent } = useGlobalContext();
   const [input, setInput] = useState({
     year: "2023",
     className: {
@@ -63,11 +64,9 @@ export default function Exams() {
     },
     term: "",
   });
-
   const [selectedQuestionTestID, setSelectedQuestionTestID] = useState(null);
   const [selected, setSelected] = useState(false);
   const [exam, setExam] = useState([]);
-
   const [classList, setClassList] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
 
@@ -82,13 +81,30 @@ export default function Exams() {
     }
     try {
       setLoading(true);
-      const result = await getClassTable("all");
-      const filterClass = result[0]?.map((data) => ({
-        id: data?.ClassId,
-        name: data?.QstClass,
-      }));
 
-      setClassList(filterClass);
+      const restriction = JSON.parse(
+        localStorage.getItem("restrictedAccessSubject")
+      );
+      const admin = localStorage.getItem("restrictedAccess");
+      if (admin == "access") {
+        const result = await getClassTable("all");
+        const filterClass = result[0]?.map((data) => ({
+          id: data?.ClassId,
+          name: data?.QstClass,
+        }));
+        setClassList(filterClass);
+      } else if (admin == "denied") {
+        setClassList("");
+      } else if (admin == "yes") {
+        const getSubID = restriction?.map((item) => item.ClassId);
+        const result1 = await getClassTable(getSubID);
+        const filterClass = result1[0]?.map((data) => ({
+          id: data?.ClassId,
+          name: data?.QstClass,
+        }));
+        setClassList(filterClass);
+      }
+      // const result = await getClassTable("all");
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -107,13 +123,36 @@ export default function Exams() {
     }
     try {
       setLoading(true);
-      const result = await getSubjectTable("all");
 
-      const filterClass = result[0]?.map((data) => ({
-        id: data?.SubjectID,
-        name: data?.SubjectName,
-      }));
-      setSubjectList(filterClass);
+      const restriction = JSON.parse(
+        localStorage.getItem("restrictedAccessSubject")
+      );
+      const admin = localStorage.getItem("restrictedAccess");
+      if (admin == "access") {
+        const result = await getSubjectTable("all");
+        const filterClass = result[0]?.map((data) => ({
+          id: data?.SubjectID,
+          name: data?.SubjectName,
+        }));
+        setSubjectList(filterClass);
+      } else if (admin == "denied") {
+        setSubjectList("");
+      } else if (admin == "yes") {
+        const getSubID = restriction?.map((item) => item.SubjectID);
+        const result1 = await getSubjectTable(getSubID);
+        const filterClass = result1[0]?.map((data) => ({
+          id: data?.SubjectID,
+          name: data?.SubjectName,
+        }));
+        setSubjectList(filterClass);
+      }
+      // const result = await getSubjectTable("all");
+
+      // const filterClass = result[0]?.map((data) => ({
+      //   id: data?.SubjectID,
+      //   name: data?.SubjectName,
+      // }));
+      // setSubjectList(filterClass);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -128,11 +167,6 @@ export default function Exams() {
   const handleEdit = () => {
     // setShowModal(true);
   };
-
-  // const handleRadioChange = (e) => {
-  //     setSelectedQuestionTestID(Number(e.target.value));
-  //     setSelected(true);
-  // };
 
   const handleSelect = (v, val) => {
     if (val === "class") {
@@ -162,13 +196,11 @@ export default function Exams() {
 
     try {
       const response = await getExamList(input);
-      console.log(response, "respon");
       if (response) {
         setExam(response[0]);
       } else {
         setExam([]);
       }
-      console.log(response, "resalksjdflkjhlkj");
     } catch (error) {
       toast.error(`${error}`);
       console.log(error);
@@ -182,7 +214,7 @@ export default function Exams() {
   };
 
   const handleAddQuestion = () => {
-    navigate(`/exam_master/add-new-ques`, {
+    navigate("/exam_master/add-new-ques", {
       state: {
         id: selectedQuestionTestID,
       },
@@ -190,13 +222,34 @@ export default function Exams() {
   };
 
   const handleViewQuestion = () => {
-    navigate(`/exam_master/edit-exam-info`, {
+    navigate("/exam_master/edit-exam-info", {
       state: {
         id: selectedQuestionTestID,
       },
     });
   };
-  // console.log(exam, "ss");
+  const handleTrue = (id) => {
+    const rightsString = localStorage.getItem("rights");
+    const rights = rightsString.split(",").map((str) => str.trim());
+    const superAdmin = JSON.parse(localStorage.getItem("user"));
+
+    if (superAdmin !== 6) {
+      if (id == 0) {
+        const newSub = 1552;
+        if (!rights.includes(newSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
+      } else {
+        const editSub = 1003;
+        if (!rights.includes(editSub.toString())) {
+          toast.warning("Access Denied");
+          return;
+        }
+      }
+    }
+    setModalComponent(true);
+  };
 
   return (
     <>
@@ -290,7 +343,7 @@ export default function Exams() {
               </div>
             </div>
 
-            <Button type="button" className={`w-fit`} onClick={handleRefresh}>
+            <Button type="button" className={"w-fit"} onClick={handleRefresh}>
               <RefreshCcw className="mr-2 h-4 w-4" />
               Refresh
             </Button>
@@ -298,23 +351,37 @@ export default function Exams() {
         </form>
 
         <div className="w-full mt-2 px-5 py-4 flex flex-col md:flex-row border rounded-sm space-y-2 md:space-y-0 md:space-x-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add New
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Exam</DialogTitle>
-                <DialogDescription>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            onClick={() => handleTrue(0)}
+          >
+            {/* <Plus className="mr-2 h-4 w-4" /> */}
+            Add New
+          </button>
+          {modalComponent && (
+            <ModalComponent title={"Create exam"}>
+              <div>
+                <h1 className="text-center">
                   Enter the form with necessary details
-                </DialogDescription>
-              </DialogHeader>
-              <InsertExamNew />
-            </DialogContent>
-          </Dialog>
+                </h1>
+                <div className="w-full flex  justify-center">
+                  <InsertExamNew />
+                </div>
+              </div>
+            </ModalComponent>
+          )}
+          {/* <Dialog>
+                        <DialogTrigger asChild>
+                            
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Create New Exam</DialogTitle>
+                                <DialogDescription>Enter the form with necessary details</DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog> */}
 
           <Button onClick={handleEdit}>
             <Edit2 className="mr-2 h-4 w-4" />
@@ -355,18 +422,6 @@ export default function Exams() {
             <Delete className="ml-2 h-4 w-4" />
           </Button>
         </div>
-
-        {/* {showModal && (
-                <div className="fixed inset-0 z-50 mt-24 customHeightModalNewDepartment opacity-1 flex items-center justify-center">
-                    <div className="bg-white customScrolling relative bottom-3 -mt-5 customHeightModalDepartment shadow-md shadow-gray-100 p-4 rounded-lg text-center border border-gray-300">
-                        <IoMdClose
-                            onClick={closeModal}
-                            className="bg-red-500 absolute top-0 rounded-md right-0 text-white"
-                            size={36}
-                        />
-                    </div>
-                </div>
-            )} */}
 
         <div className="mt-2 border rounded-sm overflow-hidden">
           <Table className="min-w-full bg-white border border-gray-300">

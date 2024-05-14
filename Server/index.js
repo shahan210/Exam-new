@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.static("uploads"));
 
-const port = 4040;
+const port = 5324;
 
 app.use(cors());
 connectToDatabase();

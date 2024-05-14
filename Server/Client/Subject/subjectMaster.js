@@ -113,24 +113,18 @@ export const CreateSubject = async (req, res) => {
   console.log(newData);
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
   try {
-    const result = await pool.query(
-      "INSERT INTO subjectsmaster (SubjectName,QDescription ,AddedDate,AddedBy,IsActive) VALUES (?,?,?,?,?);",
-      [
-        newData.SubjectName,
-        newData.QDescription,
-        Adddate,
-        newData.AddedBy,
-        newData.IsActive === true ? 1 : 0,
-      ]
+    const checkDup = await pool.query(
+      "SELECT * FROM subjectsmaster WHERE SubjectName = ?",
+      [newData.SubjectName]
     );
-    if (result.length > 0) {
+    if (checkDup.length > 0) {
       res.json({
         data: [
           {
             ActionType: "",
-            ErrorMessage: "",
+            ErrorMessage: "Subject already exists",
             ErrorCode: "",
-            JSONData1: result,
+            JSONData1: [],
             JSONData2: [],
             JSONData3: [],
             JSONData4: [],
@@ -146,27 +140,61 @@ export const CreateSubject = async (req, res) => {
         status: 200,
       });
     } else {
-      res.json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result,
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "no data found",
-      });
-      console.log(result);
+      const result = await pool.query(
+        "INSERT INTO subjectsmaster (SubjectName,QDescription ,AddedDate,AddedBy,IsActive) VALUES (?,?,?,?,?);",
+        [
+          newData.SubjectName,
+          newData.QDescription,
+          Adddate,
+          newData.AddedBy,
+          newData.IsActive === true ? 1 : 0,
+        ]
+      );
+      if (result.length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result,
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result,
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+        });
+        console.log(result);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -236,62 +264,149 @@ export const UpdateSubject = async (req, res) => {
   const newData = req.body;
   const ModifiedDate = new Date().toISOString().slice(0, 19).replace("T", " ");
   try {
-    const result = await pool.query(
-      "UPDATE subjectsmaster SET SubjectName = ?, QDescription = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE SubjectID = ?;",
-      [
-        newData.SubjectName,
-        newData.QDescription,
-        ModifiedDate,
-        newData.ModifiedBy,
-        newData.IsActive,
-        id,
-      ]
+    const checkDup = await pool.query(
+      "SELECT * FROM subjectsmaster WHERE SubjectName = ?",
+      [newData.SubjectName]
     );
-    console.log(result);
-    if (result.length > 0) {
-      res.json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "successfull",
-        status: 200,
-      });
+    if (checkDup[0].length > 0) {
+      if (checkDup[0][0].SubjectID === newData.SubjectID) {
+        const result = await pool.query(
+          "UPDATE subjectsmaster SET SubjectName = ?, QDescription = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE SubjectID = ?;",
+          [
+            newData.SubjectName,
+            newData.QDescription,
+            ModifiedDate,
+            newData.ModifiedBy,
+            newData.IsActive,
+            id,
+          ]
+        );
+        if (result[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+        } else {
+          res.status(200).json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "",
+                ErrorCode: "",
+                JSONData1: result[0],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "no data found",
+          });
+          console.log(result[0]);
+        }
+      } else {
+        if (checkDup[0].length > 0) {
+          res.json({
+            data: [
+              {
+                ActionType: "",
+                ErrorMessage: "Subject already exists",
+                ErrorCode: "",
+                JSONData1: [],
+                JSONData2: [],
+                JSONData3: [],
+                JSONData4: [],
+                JSONData5: [],
+                JSONData1Remarks: "",
+                JSONData2Remarks: "",
+                JSONData3Remarks: "",
+                JSONData4Remarks: "",
+                JSONData5Remarks: "",
+              },
+            ],
+            message: "successfull",
+            status: 200,
+          });
+        }
+      }
     } else {
-      res.status(200).json({
-        data: [
-          {
-            ActionType: "",
-            ErrorMessage: "",
-            ErrorCode: "",
-            JSONData1: result[0],
-            JSONData2: [],
-            JSONData3: [],
-            JSONData4: [],
-            JSONData5: [],
-            JSONData1Remarks: "",
-            JSONData2Remarks: "",
-            JSONData3Remarks: "",
-            JSONData4Remarks: "",
-            JSONData5Remarks: "",
-          },
-        ],
-        message: "no data found",
-      });
-      console.log(result[0]);
+      const result1 = await pool.query(
+        "UPDATE subjectsmaster SET SubjectName = ?, QDescription = ?, ModifiedDate = ?, ModifiedBy = ?, IsActive = ? WHERE SubjectID = ?;",
+        [
+          newData.SubjectName,
+          newData.QDescription,
+          ModifiedDate,
+          newData.ModifiedBy,
+          newData.IsActive,
+          id,
+        ]
+      );
+      if (result1[0].length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result1[0],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.status(200).json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result1[0],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
