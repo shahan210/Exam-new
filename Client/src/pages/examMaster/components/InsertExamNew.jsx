@@ -343,10 +343,6 @@ export default function InsertExams() {
             >
               <Save className="mr-2 h-4 w-4" /> Submit
             </button>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none ml-2 disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
-              <X className="mr-2 h-4 w-4" />
-              Close
-            </button>
           </div>
           {/* <DialogFooter className="mt-4">
                         <DialogClose asChild>
