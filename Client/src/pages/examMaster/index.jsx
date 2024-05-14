@@ -147,6 +147,15 @@ export default function Exams() {
     };
 
     const handleAddQuestion = () => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        console.log(rights);
+        const id = 1502;
+        console.log(rights.includes(id.toString()), "what is it");
+        if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            return;
+        }
         navigate(`/exam_master/add-new-ques`, {
             state: {
                 id: selectedQuestionTestID,
@@ -155,6 +164,13 @@ export default function Exams() {
     };
 
     const handleViewQuestion = () => {
+        const rightsString = localStorage.getItem("rights");
+        const rights = rightsString.split(",").map((str) => str.trim());
+        const id = 1503;
+        if (!rights.includes(id.toString())) {
+            toast.warning("Access Denied");
+            return;
+        }
         navigate(`/exam_master/edit-exam-info`, {
             state: {
                 id: selectedQuestionTestID,
