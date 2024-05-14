@@ -5,6 +5,7 @@ import SubjectRoute from "./Router/Subject/Router.js";
 import ClassRoute from "./Router/Class/Router.js";
 import UserRoute from "./Router/User/Router.js";
 import ExamRouter from "./Router/Exam/Router.js";
+import StudentRouter from "./Router/student/Router.js";
 import connectToDatabase from "./middleware/db.connection.js";
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use("/api/v1/", SubjectRoute);
 app.use("/api/v1/", ClassRoute);
 app.use("/api/v1/", UserRoute);
 app.use("/api/v1/", ExamRouter);
+app.use("/api/v2/", StudentRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
