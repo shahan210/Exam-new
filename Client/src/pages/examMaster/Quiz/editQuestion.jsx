@@ -80,9 +80,9 @@ const EditExamDetails = () => {
     const rightsString = localStorage.getItem("rights");
     const rights = rightsString.split(",").map((str) => str.trim());
     const superAdmin = JSON.parse(localStorage.getItem("user"));
-    const id = 1553;
+    const rightsId = 1553;
     if (superAdmin !== 6) {
-      if (!rights.includes(id.toString())) {
+      if (!rights.includes(rightsId.toString())) {
         toast.warning("Access Denied");
         navigate("/exam_master");
         return;

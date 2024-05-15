@@ -198,7 +198,7 @@ const AddNewQuestionMaster = () => {
     }, [id]);
     const fetchClassess = async () => {
         try {
-            const result = await getClassTable();
+            const result = await getClassTable("all");
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
                 name: data?.QstClass,
@@ -216,7 +216,7 @@ const AddNewQuestionMaster = () => {
 
     const fetchSubjects = async () => {
         try {
-            const result = await getSubjectTable();
+            const result = await getSubjectTable("all");
 
             const filterClass = result[0]?.map((data) => ({
                 id: data?.SubjectID,
@@ -246,18 +246,15 @@ const AddNewQuestionMaster = () => {
         }, 3000);
     }, [id, fetchExamIdData, fetchQuestionMaster, navigate]);
 
-    console.log(subjectList, "sub");
-    console.log(classList, "clas");
-    console.log(examData, "ceeee");
-
     useEffect(() => {
         if (examData.ClassId) {
             setClassList(classList.filter((item) => item.id == examData.ClassId));
         }
+
         if (examData.SubjectID) {
             setSubjectList(subjectList.filter((item) => item.id == examData.SubjectID));
         }
-    }, [examData,classList,subjectList]);
+    }, [examData]);
 
     const addOptionHandler = () => {
         let nextName = `Answer${questions.length + 1}`;

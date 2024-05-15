@@ -108,7 +108,7 @@ export default function EditExam({ examId }) {
     const fetchClassess = async () => {
         try {
             setLoading(true);
-            const result = await getClassTable();
+            const result = await getClassTable("all");
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
                 name: data?.QstClass,
@@ -125,7 +125,7 @@ export default function EditExam({ examId }) {
     const fetchSubjects = async () => {
         try {
             setLoading(true)
-            const result = await getSubjectTable();
+            const result = await getSubjectTable("all");
 
             const filterClass = result[0]?.map((data) => ({
                 id: data?.SubjectID,
