@@ -185,7 +185,7 @@ const EditQuestionMaster = () => {
 
     const fetchClassess = async () => {
         try {
-            const result = await getClassTable();
+            const result = await getClassTable("all");
             const filterClass = result[0]?.map((data) => ({
                 id: data?.ClassId,
                 name: data?.QstClass,
@@ -203,7 +203,7 @@ const EditQuestionMaster = () => {
 
     const fetchSubjects = async () => {
         try {
-            const result = await getSubjectTable();
+            const result = await getSubjectTable("all");
             const filterClass = result[0]?.map((data) => ({
                 id: data?.SubjectID,
                 name: data?.SubjectName,
