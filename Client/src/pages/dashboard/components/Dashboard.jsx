@@ -4,13 +4,15 @@ import Exam from "../../../assets/png/exam.png";
 import Users from "../../../assets/png/team.png";
 import ExamDefinition from "../../../assets/png/data-analytics_6999245.png";
 import Access from "../../../global/components/Access";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import getStudentImport from "../../../API/users/getStudentImport";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const rightsString = localStorage.getItem("rights");
+  const admin = JSON.parse(localStorage.getItem("user"));
 
   const auhtorize = (id, route) => {
     const rights = rightsString.split(",").map((str) => str.trim());
@@ -72,6 +74,19 @@ const Dashboard = () => {
               <img src={Users} alt="subject master" className=" w-24" />
             </div>{" "}
             <h3 className="xl:text-lg text-md font-semibold mb-2">Users</h3>
+          </div>
+          <div
+            onClick={() => navigate("/utility")}
+            className={
+              admin.UserType == 6 || admin.UserType == 3
+                ? "  bg-white transition duration-300 w-36 h-48  xl:w-48 ease-in-out transform hover:scale-105 p-6 rounded-md shadow-md text-center cursor-pointer"
+                : "hidden bg-white transition duration-300 w-36 h-48  xl:w-48 ease-in-out transform hover:scale-105 p-6 rounded-md shadow-md text-center cursor-pointer"
+            }
+          >
+            <div className="mb-4 flex justify-center">
+              <img src={Users} alt="subject master" className=" w-24" />
+            </div>{" "}
+            <h3 className="xl:text-lg text-md font-semibold mb-2">Utility</h3>
           </div>
           <div className="">
             <a

@@ -14,6 +14,9 @@ const getClassEdit = async (data, id) => {
       IsActive: data.IsActive,
       headers: { Authorization: "Bearer " + token },
     });
+    if (result[0].ErrorMessage == "Class already exists") {
+      return (userData = "Class exists");
+    }
     userData = result?.map((item) => item.JSONData1);
     console.log(userData);
     return userData;

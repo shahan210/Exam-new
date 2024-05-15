@@ -13,7 +13,10 @@ const getClassCreate = async (data) => {
       IsActive: data.IsActive,
       headers: { Authorization: "Bearer " + token },
     });
-    console.log(result);
+
+    if (result[0].ErrorMessage == "Class already exists") {
+      return (userData = "Class exists");
+    }
     userData = result?.map((item) => item.JSONData1[0]);
     return userData;
   } catch (error) {

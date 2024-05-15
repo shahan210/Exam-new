@@ -17,7 +17,11 @@ const ClassMasterEdit = ({ title, classID }) => {
     e.preventDefault();
     try {
       const result = await getClassCreate(data);
-      console.log(result);
+
+      if (result == "Class exists") {
+        return toast.warning("Class exists");
+      }
+
       if (result[0][0].insertId === undefined) {
         return;
       }
@@ -31,7 +35,11 @@ const ClassMasterEdit = ({ title, classID }) => {
   const updateSubject = async (data, e) => {
     e.preventDefault();
     try {
+      
       const result = await getClassEdit(data, classID);
+      if (result == "Class exists") {
+        return toast.warning("Class exists");
+      }
       if (result[0]?.insertId === undefined) {
         return;
       }

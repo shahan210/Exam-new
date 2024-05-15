@@ -112,7 +112,6 @@ export const getRights = async (req, res) => {
         message: "no data found",
       });
     }
-    // console.log(result);
   } catch (error) {
     console.log(error);
   }
@@ -431,7 +430,6 @@ export const createUserSubjects = async (req, res) => {
   const id = req.body.id;
   const userClass = req.body.class;
   const userSubjects = req.body.subjects;
-  console.log(id, userClass, userSubjects);
   const values = userSubjects.map((subjectId, index) => [
     subjectId,
     userClass[index],
@@ -497,7 +495,6 @@ export const createUserSubjects = async (req, res) => {
           message: "no data found",
           status: 404,
         });
-        console.log(result);
       }
     } catch (error) {
       console.log(error);
@@ -588,5 +585,164 @@ export const importStudentData = async (req, res) => {
       item.JSONData2.substring(0, result.data.indexOf("||JasonEnd", 0))
     )
   );
-  console.log(studentYear);
+
+  try {
+    if (studentMaster.length > 0) {
+      const insertRowQuery = `
+    INSERT INTO studentmaster (StudentID,STDMSTID, ADMNO, SNAME,FATHERNAME,GENDER,DOB,DOA,SMSPHONE,ADDRESS,MNAME,TCSTS,PASSWORD,VERCODE) VALUES ?
+  `;
+      const dataArray = studentMaster.map((student) => [
+        student.StudentID,
+        student.STDMSTID,
+        student.ADMNO,
+        student.SNAME,
+        student.FATHERNAME,
+        student.GENDER,
+        new Date(student.DOB),
+        new Date(student.DOA),
+        student.SMSPHONE,
+        student.ADDRESS,
+        student.MNAME,
+        student.TCSTS,
+        student.PASSWORD,
+        student.VERCODE,
+      ]);
+      const deletetable = await pool.query("DELETE FROM studentmaster");
+
+      const result =await pool.query(
+        insertRowQuery,
+        [dataArray],
+        (error, results, fields) => {
+          if (error) {
+            console.error("Error inserting data:", error);
+            return;
+          }
+          console.log("Data inserted successfully:", results);
+        }
+      );
+      if (result.length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result,
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: [result],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+          status: 404,
+        });
+      }
+    }
+    if (studentYear.length > 0) {
+      const insertRowQuery = `
+    INSERT INTO studentyearmaster (StudentYearID,StudentID, STDYRID, STDMSTID,CLID,RNO,CLNAME,SECNAME,ACASTART,CLASSCAT,STS) VALUES ?
+  `;
+      const dataArray = studentYear.map((student) => [
+        student.StudentYearID,
+        student.StudentID,
+        student.STDYRID,
+        student.STDMSTID,
+        student.CLID,
+        student.RNO,
+        student.CLNAME,
+        student.SECNAME,
+        student.ACASTART,
+        student.CLASSCAT,
+        student.STS,
+      ]);
+
+      const clearTable = await pool.query("DELETE FROM studentyearmaster");
+      const result =await pool.query(
+        insertRowQuery,
+        [dataArray],
+        (error, results, fields) => {
+          if (error) {
+            console.error("Error inserting data:", error);
+            return;
+          }
+          console.log("Data inserted successfully:", results);
+        }
+      );
+      if (result.length > 0) {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: result,
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "successfull",
+          status: 200,
+        });
+      } else {
+        res.json({
+          data: [
+            {
+              ActionType: "",
+              ErrorMessage: "",
+              ErrorCode: "",
+              JSONData1: [result],
+              JSONData2: [],
+              JSONData3: [],
+              JSONData4: [],
+              JSONData5: [],
+              JSONData1Remarks: "",
+              JSONData2Remarks: "",
+              JSONData3Remarks: "",
+              JSONData4Remarks: "",
+              JSONData5Remarks: "",
+            },
+          ],
+          message: "no data found",
+          status: 404,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };

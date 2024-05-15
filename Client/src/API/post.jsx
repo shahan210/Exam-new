@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useGlobalContext } from "../global/GlobalContext";
 const baseUrl = import.meta.env.VITE_URL;
 
 const axiosInstance = axios.create({

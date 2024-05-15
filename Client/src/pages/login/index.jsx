@@ -59,7 +59,6 @@ const LoginPage = () => {
               UserType: item.UserType,
             };
           })[0];
-          console.log(getUserDeatils.UserType);
           if (getUserDeatils.UserType !== 6) {
             const result1 = await getUserSubjectsClass(getUserDeatils.LoginID);
             console.log(result1[0]);
