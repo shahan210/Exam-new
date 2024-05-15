@@ -385,7 +385,7 @@ const EditQuestionMaster = () => {
                                     </Label>
                                     {image.length > 0 &&
                                         image.map((data) => {
-                                            const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                            const imageUrl = `http://localhost:5324/${data.AnswerImage}`;
                                             return (
                                                 <React.Fragment key={data.AnswerTitle}>
                                                     {data.AnswerTitle === "QuizTittle" &&
@@ -460,7 +460,7 @@ const EditQuestionMaster = () => {
                                                 <Label className="w-28">Answer 1</Label>
                                                 {image.length > 0 &&
                                                     image.map((data) => {
-                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        const imageUrl = `http://localhost:5324/${data.AnswerImage}`;
                                                         return (
                                                             <React.Fragment key={data.AnswerTitle}>
                                                                 {data.AnswerTitle === "Answer1" &&
@@ -533,7 +533,7 @@ const EditQuestionMaster = () => {
                                                 <Label className="w-28">Answer 2</Label>
                                                 {image.length > 0 &&
                                                     image.map((data) => {
-                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        const imageUrl = `http://localhost:5324/${data.AnswerImage}`;
                                                         return (
                                                             <React.Fragment key={data.AnswerTitle}>
                                                                 {data.AnswerTitle === "Answer2" &&
@@ -606,7 +606,7 @@ const EditQuestionMaster = () => {
                                                 <Label className="w-28">Answer 3</Label>
                                                 {image.length > 0 &&
                                                     image.map((data) => {
-                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        const imageUrl = `http://localhost:5324/${data.AnswerImage}`;
                                                         return (
                                                             <React.Fragment key={data.AnswerTitle}>
                                                                 {data.AnswerTitle === "Answer3" &&
@@ -679,7 +679,7 @@ const EditQuestionMaster = () => {
                                                 <Label className="w-28">Answer 4</Label>
                                                 {image.length > 0 &&
                                                     image.map((data) => {
-                                                        const imageUrl = `http://localhost:4040/${data.AnswerImage}`;
+                                                        const imageUrl = `http://localhost:5324/${data.AnswerImage}`;
                                                         return (
                                                             <React.Fragment key={data.AnswerTitle}>
                                                                 {data.AnswerTitle === "Answer4" &&
