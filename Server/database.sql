@@ -167,7 +167,7 @@ CREATE TABLE examstudentstatus (
 );
 CREATE TABLE examquestionstatus (
     QBEXAMSTSID INT AUTO_INCREMENT PRIMARY KEY,
-    QuestionBankID INT,
+    QuestionBankID INT, 
     QuestionTestID INT,
     ExamQuestionID INT,
     StudentYearID INT,

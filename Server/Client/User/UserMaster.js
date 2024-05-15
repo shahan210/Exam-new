@@ -2,6 +2,7 @@ import pool from "../../Config/config.js";
 import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
+
 export const getUsers = async (req, res) => {
   function encodePasswords(credentials) {
     return credentials.map((cred) => {
