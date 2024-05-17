@@ -158,3 +158,29 @@ CREATE TABLE studentyearmaster (
     STS VARCHAR(1)
 );
 
+CREATE TABLE examstudentstatus (
+    StdExamID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentYearID INT,
+    StudentID INT,
+    QuestionTestID INT,
+    FinalSubmitYN INT
+);
+CREATE TABLE examquestionstatus (
+    QBEXAMSTSID INT AUTO_INCREMENT PRIMARY KEY,
+    QuestionBankID INT, 
+    QuestionTestID INT,
+    ExamQuestionID INT,
+    StudentYearID INT,
+    StudentID INT,
+    RefixSlno INT,
+    MTSeleAnswer INT,
+    MTSeleAswText VARCHAR(1000),
+    RightAnsw INT,
+    MTMark INT,
+    MTHour INT,
+    MTMin INT,
+    MTSec INT,
+    AddedDate VARCHAR(20),
+    AttType INT,
+    StdExamID INT
+);

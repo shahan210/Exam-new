@@ -14,7 +14,6 @@ export const authStudent = async (req, res) => {
     function encodePasswords(credentials) {
       return credentials.map((cred) => {
         const encodedPassword = btoa(cred.PASSWORD + "student");
-        console.log();
         return { ...cred, PASSWORD: encodedPassword };
       });
     }
@@ -23,11 +22,10 @@ export const authStudent = async (req, res) => {
       [userDetails.id, decodedPassword]
     );
     const joinQuery = await pool.query(
-      `SELECT studentmaster.ADMNO,studentmaster.PASSWORD, studentmaster.SNAME,studentmaster.StudentID , studentyearmaster.CLNAME,studentyearmaster.SECNAME  FROM studentmaster INNER JOIN studentyearmaster ON studentmaster.STDMSTID = studentyearmaster.STDMSTID WHERE studentmaster.StudentID = '${result[0][0].StudentID}' AND studentmaster.StudentID = '${result[0][0].StudentID}';`
+      `SELECT studentmaster.ADMNO,studentmaster.PASSWORD, studentmaster.SNAME,studentmaster.StudentID , studentyearmaster.CLNAME,studentyearmaster.SECNAME,studentyearmaster.StudentYearID  FROM studentmaster INNER JOIN studentyearmaster ON studentmaster.STDMSTID = studentyearmaster.STDMSTID WHERE studentmaster.StudentID = '${result[0][0].StudentID}' AND studentmaster.StudentID = '${result[0][0].StudentID}';`
     );
     const data1 = encodePasswords(joinQuery[0]);
 
-    // console.log(joinQuery);
     if (joinQuery[0].length > 0) {
       const id = joinQuery[0].map((item) => item.StudentID)[0];
       const access = jwt.sign(
@@ -35,7 +33,7 @@ export const authStudent = async (req, res) => {
           id,
         },
         process.env.VITE_REFRESH_TOKEN,
-        { expiresIn: 12600 }
+        { expiresIn: 21600 }
       );
       res.json({
         data: [
