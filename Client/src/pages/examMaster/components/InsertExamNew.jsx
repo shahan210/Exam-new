@@ -1,8 +1,5 @@
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Save, X } from "lucide-react";
+import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "../../../components/ui/button";
-import { DialogFooter } from "../../../components/ui/dialog";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import {
@@ -16,8 +13,11 @@ import { toast } from "react-toastify";
 import getClassTable from "../../../API/classMaster/getClassTable";
 import { getSubjectTable } from "../../../API/subjectMaster/getSubjectTable";
 import createExamMaster from "../../../API/examMaster/createExamMaster";
+import { useGlobalContext } from "../../../global/GlobalContext";
 
 export default function InsertExams() {
+
+  const { loading, setLoading, setModalComponent } = useGlobalContext();
   const [input, setInput] = useState({
     ExamDateStr: "",
     year: "",
@@ -37,7 +37,6 @@ export default function InsertExams() {
     },
     term: "",
   });
-  const [loading, setLoading] = useState(true);
 
   const [classList, setClassList] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
@@ -162,11 +161,12 @@ export default function InsertExams() {
     try {
       setLoading(true);
       const response = await createExamMaster(input);
-      console.log(response, "reult");
       if (response) {
         toast.success("successfully Created");
+        setModalComponent(false)
         setLoading(false);
       }
+      setModalComponent(false)
       setLoading(false);
     } catch (error) {
       toast.error(`${error}`);

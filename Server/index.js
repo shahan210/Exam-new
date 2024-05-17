@@ -7,6 +7,7 @@ import UserRoute from "./Router/User/Router.js";
 import ExamRouter from "./Router/Exam/Router.js";
 import StudentRouter from "./Router/student/Router.js";
 import connectToDatabase from "./middleware/db.connection.js";
+import bodyParser from "body-parser";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ const port = process.env.PORT || 5324;
 app.use(cors());
 connectToDatabase();
 app.use(express.json());
+app.use(bodyParser.json());
 
 // Routes
 app.use("/api/v1/", SubjectRoute);

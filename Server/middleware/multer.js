@@ -9,8 +9,8 @@ export const storage = multer.diskStorage({
     },
     
     filename: function (req, file, cb) {
-        const id = req.uploadId;
-        const fileName = req.uploadFileName;
+        const id = req.uploadId ?? "";
+        const fileName = req.uploadFileName ?? "file";
         const fileExtension = file.originalname.split(".").pop();
         const dynamicFilename = id + "-" + fileName + "." + fileExtension;
         cb(null, dynamicFilename);

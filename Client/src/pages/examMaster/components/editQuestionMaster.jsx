@@ -451,6 +451,15 @@ const EditQuestionMaster = () => {
                                     name="QuestionDesc02"
                                 />
                             </div>
+                            <div className="flex justify-between">
+                                <Label className="text-md basis-1/4 font-semibold">Mark</Label>
+                                <Input
+                                    value={quizData?.Mark}
+                                    onChange={(e) => setQuizData({ ...quizData, Mark: e.target.value })}
+                                    className="md:basis-3/4 w-full"
+                                    name="Mark"
+                                />
+                            </div>
 
                             <div className="border p-4 py-4 space-y-4 rounded-md">
                                 <div className="flex flex-col gap-2">
