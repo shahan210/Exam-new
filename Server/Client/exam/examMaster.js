@@ -270,6 +270,7 @@ export const newQuestionMaster = async (req, res) => {
         QuestionTypeID: "",
         QuestionDesc01: "",
         QuestionDesc02: "",
+        Mark: "",
         Practical: "",
         Remarks: "",
         Qalerts: "",
@@ -339,6 +340,7 @@ export const createdQuestionMaster = async (req, res) => {
             QuestionTypeID,
             QuestionDesc01,
             QuestionDesc02,
+            Mark,
             Practical,
             Remarks,
             Qalerts,
@@ -380,6 +382,7 @@ export const createdQuestionMaster = async (req, res) => {
                 quesData.QuestionTypeID,
                 quesData.QuestionDesc01,
                 quesData.QuestionDesc02,
+                quesData.Mark,
                 quesData.Practical,
                 quesData.Remarks,
                 quesData.Qalerts,
@@ -880,3 +883,8 @@ export const UploadImages = async (req, res) => {
         }
     });
 };
+
+
+export const UploadFileData = async (req, res) => {
+    
+}

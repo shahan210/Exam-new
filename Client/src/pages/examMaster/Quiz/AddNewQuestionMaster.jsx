@@ -16,6 +16,7 @@ import { formatDateForInput } from "../../../utils/helpers";
 import getQuestionMaster from "../../../API/examMaster/getQuestionMaster";
 import createdQuestionMaster from "../../../API/examMaster/createdQuestionMaster";
 import uploadQuestionImages from "../../../API/examMaster/uploadQuestionImages";
+import uploadQuestionFiles from "../../../API/examMaster/uploadQuestionfile";
 
 const AddNewQuestionMaster = () => {
     const location = useLocation();
@@ -26,6 +27,8 @@ const AddNewQuestionMaster = () => {
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
     const [HTimg, setHTimg] = useState(null);
+    const [excelFile, setExcelFile] = useState(null);
+    const [excelsubmit, setExcelsubmit] = useState(false);
     const [HTimgPreview, setHTimgPreview] = useState(null);
     const [result, setResult] = useState({
         QuestionBankID: "",
@@ -40,6 +43,7 @@ const AddNewQuestionMaster = () => {
         QuestionTypeID: "",
         QuestionDesc01: "",
         QuestionDesc02: "",
+        Mark: "",
         Practical: "",
         Remarks: "",
         Qalerts: "",
@@ -302,6 +306,26 @@ const AddNewQuestionMaster = () => {
         }
     };
 
+    const handleExcelFile = (event) => {
+        setExcelsubmit(true);
+        setExcelFile(event.target.files[0]);
+    };
+
+    const hanldeFileUpload = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("files", excelFile);
+        formData.append("examID", result.QuestionTestID);
+        formData.append("classID", result.ClassId);
+        formData.append("subID", result.SubjectID);
+        formData.append("questionID", result.QuestionBankID);
+
+
+        const addImages = await uploadQuestionFiles(formData);
+        console.log(addImages, "response");
+    };
+
     const handleRemoveOption = (index) => {
         const values = [...questions];
         values[index].value = "";
@@ -353,9 +377,8 @@ const AddNewQuestionMaster = () => {
     const handleSubmission = async (e) => {
         e.preventDefault();
 
-        // console.log(result, "result");
-        // console.log(questions, "data");
         if (result.RightAnswer === "") return toast.warn("Choose a right answer");
+        if (result.Mark === "") return toast.warn("Please write mark");
 
         try {
             const response = await createdQuestionMaster(result);
@@ -405,6 +428,32 @@ const AddNewQuestionMaster = () => {
                     Back
                 </Button>
                 <h3 className="font-semibold md:text-xl">Add New</h3>
+                <div className="p-2 border border-black border-solid w-fit rounded-md">
+                    <div className="flex w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="picture" className="whitespace-nowrap">
+                            Question file upload
+                        </Label>
+                        <div>
+                            <Input
+                                id={`picture`}
+                                type="file"
+                                onChange={(e) => handleExcelFile(e)}
+                                name="file"
+                                className=""
+                                accept=".xls, .xlsx,"
+                            ></Input>
+                        </div>
+                        {excelsubmit && excelFile && (
+                            <Button
+                                onClick={hanldeFileUpload}
+                                className="bg-green-500 text-white px-4 py-2 mx-auto"
+                                type="button"
+                            >
+                                upload
+                            </Button>
+                        )}
+                    </div>
+                </div>
 
                 <div className=" p-6 rounded-md w-full md:w-3/4 lg:w-full ">
                     {/* {questionNewData && ( */}
@@ -557,6 +606,18 @@ const AddNewQuestionMaster = () => {
                                     </div>
                                 </div>
                             )}
+                            <div className="flex items-center">
+                                <Label htmlFor="mark" className="text-md font-semibold w-48">
+                                    Mark
+                                </Label>
+                                <Input
+                                    type="text"
+                                    name="Mark"
+                                    value={result?.Mark}
+                                    onChange={(e) => setResult({ ...result, Mark: e.target.value })}
+                                    className="border p-2 w-full"
+                                />
+                            </div>
                         </div>
 
                         {/* question title and its title image upload button  */}
