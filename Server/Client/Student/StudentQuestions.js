@@ -1,7 +1,7 @@
 import pool from "../../Config/config.js";
 
 export const addQuestions = async (req, res) => {
-  let questionDetails = req.body;
+  let questionDetails = req.body.data;
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   const insertRowQuery =
@@ -246,10 +246,9 @@ export const UpdateQuestion = async (req, res) => {
 
 export const retreiveExam = async (req, res) => {
   let data = req.body;
-  console.log(data);
   try {
     const result = await pool.query(
-      "SELECT MTMin, QuestionBankID, MTHour, MTSec, AttType FROM examquestionstatus WHERE QuestionTestID=? AND StudentID=?",
+      "SELECT MTMin, QuestionBankID, MTHour,AddedDate, MTSec, AttType FROM examquestionstatus WHERE QuestionTestID=? AND StudentID=?",
       [data.QuestionTestID, data.StudentID]
     );
     if (result.length > 0) {

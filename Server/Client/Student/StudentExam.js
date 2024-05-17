@@ -93,7 +93,6 @@ export const getExams = async (req, res) => {
 
 export const getQuestions = async (req, res) => {
   let examID = req.params.id;
-
   const result = await pool.query(
     "SELECT * FROM questionbankmst WHERE QuestionTestID =?",
     [examID]
@@ -406,6 +405,7 @@ export const completeExam = async (req, res) => {
 
 export const checkExam = async (req, res) => {
   let id = req.body;
+  console.log(1);
   try {
     const result = await pool.query(
       "SELECT * FROM examstudentstatus WHERE StudentID = ? AND QuestionTestID = ?",
