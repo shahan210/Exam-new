@@ -16,7 +16,7 @@ export const getExams = async (req, res) => {
 
     if (getClass[0].length > 0) {
       const getExam = await pool.query(
-        "SELECT  examdefinitiontmst.QuestionTestID,examdefinitiontmst.AcaYear,examdefinitiontmst.ExamName,examdefinitiontmst.SubjectID,examdefinitiontmst.ALTMTHour, examdefinitiontmst.ALTMTMin, examdefinitiontmst.ALTMTSec, subjectsmaster.SubjectName FROM  examdefinitiontmst  INNER JOIN  subjectsmaster ON examdefinitiontmst.SubjectID = subjectsmaster.SubjectID WHERE examdefinitiontmst.ClassId = ?   AND DATE_FORMAT(ExamDate, '%Y-%m-%d') LIKE ? ",
+        "SELECT  examdefinitiontmst.QuestionTestID,examdefinitiontmst.AcaYear,examdefinitiontmst.ExamName,examdefinitiontmst.SubjectID,examdefinitiontmst.ALTMTHour, examdefinitiontmst.ALTMTMin, examdefinitiontmst.ALTMTSec, subjectsmaster.SubjectName FROM  examdefinitiontmst  INNER JOIN  subjectsmaster ON examdefinitiontmst.SubjectID = subjectsmaster.SubjectID WHERE examdefinitiontmst.ClassId = ? AND DATE_FORMAT(ExamDate, '%Y-%m-%d') LIKE ? ",
         [getClass[0][0].ClassId, today]
       );
 
@@ -240,7 +240,6 @@ export const upcomingExams = async (req, res) => {
 
 export const getStudentExam = async (req, res) => {
   const data = req.body;
-  console.log(data);
   try {
     const check = await pool.query(
       "SELECT FinalSubmitYN FROM examstudentstatus WHERE StudentID = ? AND QuestionTestID =?",
@@ -252,7 +251,6 @@ export const getStudentExam = async (req, res) => {
     );
 
     if (check[0].length > 0) {
-      console.log(1);
       if (check[0][0]?.FinalSubmitYN == 1) {
         res.status(200).json({
           data: [
@@ -408,7 +406,6 @@ export const completeExam = async (req, res) => {
 
 export const checkExam = async (req, res) => {
   let id = req.body;
-  console.log(id);
   try {
     const result = await pool.query(
       "SELECT * FROM examstudentstatus WHERE StudentID = ? AND QuestionTestID = ?",

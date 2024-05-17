@@ -9,7 +9,12 @@ import {
   getStudentExam,
   upcomingExams,
 } from "../../Client/Student/StudentExam.js";
-import { addQuestions } from "../../Client/Student/StudentQuestions.js";
+import {
+  UpdateQuestion,
+  addQuestions,
+  results,
+  retreiveExam,
+} from "../../Client/Student/StudentQuestions.js";
 
 
 const router = express.Router();
@@ -22,5 +27,8 @@ router.post("/student/exam", getStudentExam);
 router.post("/student/exam/complete", completeExam);
 router.post("/student/check", checkExam);
 router.post("/question/all", addQuestions);
+router.post("/question/one", UpdateQuestion);
+router.post("/question/retrieve", retreiveExam);
+router.post("/question/results", results);
 
 export default router;
