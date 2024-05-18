@@ -1122,3 +1122,61 @@ export const UploadFileData = async (req, res) => {
         res.status(500).json({ error: "Error inserting data", details: error });
     }
 };
+
+export const UpdateExamMark = async (req, res) => {
+  let data = req.body;
+  try {
+    // const UPDATE questions
+    const result = await pool.query(
+      "UPDATE questionbankmst SET Mark = ? WHERE QuestionTestID = ?;",
+      [data.Mark, data.QuestionTestID]
+    );
+    
+    if (result.length > 0) {
+        res.status(200).json({
+            data: [
+                {
+                    ActionType: "",
+                    ErrorMessage: "",
+                    ErrorCode: "",
+                    JSONData1: result,
+                    JSONData2: [],
+                    JSONData3: [],
+                    JSONData4: [],
+                    JSONData5: [],
+                    JSONData1Remarks: "",
+                    JSONData2Remarks: "",
+                    JSONData3Remarks: "",
+                    JSONData4Remarks: "",
+                    JSONData5Remarks: "",
+                },
+            ],
+            message: "successfull",
+            status: 200,
+        });
+    } else {
+        res.status(200).json({
+            data: [
+                {
+                    ActionType: "",
+                    ErrorMessage: "",
+                    ErrorCode: "",
+                    JSONData1: result,
+                    JSONData2: [],
+                    JSONData3: [],
+                    JSONData4: [],
+                    JSONData5: [],
+                    JSONData1Remarks: "",
+                    JSONData2Remarks: "",
+                    JSONData3Remarks: "",
+                    JSONData4Remarks: "",
+                    JSONData5Remarks: "",
+                },
+            ],
+            message: "no data found",
+        });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

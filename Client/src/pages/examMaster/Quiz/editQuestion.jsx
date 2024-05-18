@@ -29,13 +29,16 @@ import getExamMasterEditInfo from "../../../API/examMaster/getExamMasterEditInfo
 import { formatDateForInput } from "../../../utils/helpers";
 import { useGlobalContext } from "../../../global/GlobalContext";
 import { toast } from "react-toastify";
+import ModalComponent from "../../../global/components/Modal";
+import getUpdateQuestionMarks from "../../../API/examMaster/getUpdateQuestionMarks";
 
 const EditExamDetails = () => {
+  const [newMark, setNewMark] = useState("");
   const location = useLocation();
   const id = location.state.id;
   const navigate = useNavigate();
-  const { loading, setLoading } = useGlobalContext();
-
+  const { loading, setLoading, modalComponent, setModalComponent } =
+    useGlobalContext();
   const [examData, setExamData] = useState({
     ALTMTHour: "",
     ALTMTMin: "",
@@ -140,30 +143,78 @@ const EditExamDetails = () => {
     setSelectedQuestionIndex(index);
     console.log("Question Data", index);
   };
-
+  const updatemark = async () => {
+    let data = {
+      QuestionTestID: id,
+      Mark: newMark,
+    };
+    try {
+      const result = await getUpdateQuestionMarks(data);
+      if (result) {
+        toast.success("Mark updated");
+      }
+      setModalComponent(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log();
   return (
     <Layout>
       <Button onClick={() => navigate(-1)}>
         <ChevronLeft className="mr-2 h-4 w-4" />
         Back
       </Button>
+      {modalComponent && (
+        <ModalComponent title={"Update Exam Question Mark"}>
+          <div className="flex justify-center items-center gap-3">
+            <label htmlFor="mark">New Mark</label>
+            <div className="w-fit">
+              <input
+                type="number"
+                id="mark"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                onChange={(e) => setNewMark(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 items-center justify-center">
+            <button
+              onClick={() => updatemark()}
+              className="px-4  bg-green-500 pxX-6 py-2 rounded-md text-white"
+            >
+              Update
+            </button>
+            <button
+              onClick={() => setModalComponent(false)}
+              className="px-4  bg-red-500 pxX-6 py-2 rounded-md text-white"
+            >
+              Cancel
+            </button>
+          </div>
+        </ModalComponent>
+      )}
       <div className="flex items-center justify-between">
         <h1 className="font-semibold text-xl">Edit Exam</h1>
-
-        <Button asChild>
-          <button
-            onClick={() => {
-              navigate("/exam_master/add-new-ques", {
-                state: {
-                  id: id,
-                },
-              });
-            }}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add
-          </button>
-        </Button>
+        <div className="flex gap-4">
+          <Button asChild>
+            <button onClick={() => setModalComponent(true)}>Update Mark</button>
+          </Button>
+          <Button asChild>
+            <button
+              onClick={() => {
+                navigate("/exam_master/add-new-ques", {
+                  state: {
+                    id: id,
+                  },
+                });
+              }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add
+            </button>
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded w-full  mt-2 overflow-auto">

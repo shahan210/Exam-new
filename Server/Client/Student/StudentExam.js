@@ -94,9 +94,45 @@ export const getExams = async (req, res) => {
 export const getQuestions = async (req, res) => {
   let examID = req.params.id;
   const result = await pool.query(
-    "SELECT * FROM questionbankmst WHERE QuestionTestID =?",
+    `SELECT 
+ questionbankmst.QuestionBankID,
+    questionbankmst.QuestionTestID,
+    questionbankmst.SubjectID,
+    questionbankmst.Question1,
+    questionbankmst.Answer,
+    questionbankmst.Answer1,
+    questionbankmst.Answer2,
+    questionbankmst.Answer3,
+    questionbankmst.Answer4,
+    questionbankmst.Answer5,
+    questionbankmst.Answer6,
+    questionbankmst.RightAnswer,
+    questionbankmst.AddedDate,
+    questionbankmst.Mark,
+    questionbankmst.ClassId,
+    questionimages.QuizTittle,
+    questionimages.Answer1 AS ImageAnswer1,
+    questionimages.Answer2 AS ImageAnswer2,
+    questionimages.Answer3 AS ImageAnswer3,
+    questionimages.pathName,
+    questionimages.Answer4 AS ImageAnswer4
+FROM 
+    questionbankmst
+JOIN 
+    questionimages 
+ON 
+    questionbankmst.QuestionBankID = questionimages.QuestionBankID
+WHERE 
+    questionbankmst.QuestionTestID = ?;
+`,
     [examID]
   );
+  console.log(result);
+  const resultImages = await pool.query(
+    "SELECT * FROM questionimages WHERE QuestionBankID = ?;",
+    [examID]
+  );
+
   try {
     if (result[0].length > 0) {
       res.status(200).json({
@@ -110,7 +146,7 @@ export const getQuestions = async (req, res) => {
             JSONData3: [],
             JSONData4: [],
             JSONData5: [],
-            JSONData1Remarks: "",
+            JSONData1Remarks: "question",
             JSONData2Remarks: "",
             JSONData3Remarks: "",
             JSONData4Remarks: "",
@@ -142,7 +178,9 @@ export const getQuestions = async (req, res) => {
         message: "no data found",
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const upcomingExams = async (req, res) => {

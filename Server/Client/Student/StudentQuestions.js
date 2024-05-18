@@ -115,15 +115,15 @@ export const addQuestions = async (req, res) => {
 };
 
 export const UpdateQuestion = async (req, res) => {
-  let data = req.body;
-  // get all necesary fields then just update carefull with time
+  let data = req.body.data;
+  console.log(data);
   try {
     if (data.RightAnswer == data.MTSeleAnswer) {
       const result = await pool.query(
-        "UPDATE examquestionstatus SET RightAnsw = ?,MTMark=?, MTSeleAnswer = ?, MTHour = ?, MTMin = ?, MTSeleAswText= ? , MTSec = ?, AttType = ? WHERE QuestionBankID= ? AND StudentID = ?;",
+        "UPDATE examquestionstatus SET RightAnsw = ?, MTMark=?, MTSeleAnswer = ?, MTHour = ?, MTMin = ?, MTSeleAswText= ? , MTSec = ?, AttType = ? WHERE QuestionBankID= ? AND StudentID = ?;",
         [
           1,
-          1,
+          data.MTMark,
           data.MTSeleAnswer,
           data.MTHour,
           data.MTMin,
