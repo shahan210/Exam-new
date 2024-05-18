@@ -1093,3 +1093,18 @@ export const UploadFileData = async (req, res) => {
   console.log(lengthofrespone, "hhhhhhhh");
   // console.log(dataToInsert);
 };
+
+export const UpdateExamMark = async (req, res) => {
+  let data = req.body;
+  try {
+    // const UPDATE questions
+    const result = await pool.query(
+      "UPDATE questionbankmst SET Mark = ? WHERE QuestionTestID = ?;",
+      [data.Mark, data.QuestionTestID]
+    );
+    console.log(result);
+    res.json(result[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};

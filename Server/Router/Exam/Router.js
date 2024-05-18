@@ -2,18 +2,19 @@ import express from "express";
 import fs from "fs";
 import multer from "multer";
 import {
-    UploadFileData,
-    UploadImages,
-    createExamMaster,
-    createdQuestionMaster,
-    editExamMasterInfo,
-    getExamMaster,
-    getExamMasterEditInfo,
-    getExamMasterInfo,
-    getQuizMasterEditInfo,
-    getYearClassSubjectWiseList,
-    newQuestionMaster,
-    updateQuizMasterEditInfo,
+  UpdateExamMark,
+  UploadFileData,
+  UploadImages,
+  createExamMaster,
+  createdQuestionMaster,
+  editExamMasterInfo,
+  getExamMaster,
+  getExamMasterEditInfo,
+  getExamMasterInfo,
+  getQuizMasterEditInfo,
+  getYearClassSubjectWiseList,
+  newQuestionMaster,
+  updateQuizMasterEditInfo,
 } from "../../Client/exam/examMaster.js";
 import { fileFilter, storage } from "../../middleware/multer.js";
 
@@ -48,5 +49,6 @@ router.get("/createnewquestion/:id", newQuestionMaster);
 router.post("/createdQuestionMaster", createdQuestionMaster);
 router.post("/uploadQuestionImages", upload.array("images"), UploadImages);
 router.post("/uploadQuestionfile", fileUpload.single("files"), UploadFileData);
+router.post("/UploadMark", UpdateExamMark);
 
 export default router;
