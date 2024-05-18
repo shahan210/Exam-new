@@ -27,6 +27,7 @@ const AddNewQuestionMaster = () => {
     const [classList, setClassList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
     const [HTimg, setHTimg] = useState(null);
+    const [excelFileuploaded, setExcelFileuploaded] = useState(true);
     const [excelFile, setExcelFile] = useState(null);
     const [excelsubmit, setExcelsubmit] = useState(false);
     const [HTimgPreview, setHTimgPreview] = useState(null);
@@ -200,6 +201,7 @@ const AddNewQuestionMaster = () => {
             console.error("Error fetching exam data:", error);
         }
     }, [id]);
+
     const fetchClassess = async () => {
         try {
             const result = await getClassTable("all");
@@ -313,6 +315,7 @@ const AddNewQuestionMaster = () => {
 
     const hanldeFileUpload = async (e) => {
         e.preventDefault();
+        setExcelFile(true);
 
         const formData = new FormData();
         formData.append("files", excelFile);
@@ -321,9 +324,21 @@ const AddNewQuestionMaster = () => {
         formData.append("subID", result.SubjectID);
         formData.append("questionID", result.QuestionBankID);
 
-
-        const addImages = await uploadQuestionFiles(formData);
-        console.log(addImages, "response");
+        try {
+            const addImages = await uploadQuestionFiles(formData);
+            if (addImages[0]?.JSONData1[0]?.length > 0) {
+                toast.success("Successfully uploaded");
+                setExcelFile(null);
+                setExcelsubmit(false);
+                setExcelFileuploaded(false);
+            } else {
+                toast.error("Upload failed");
+                setExcelFile(null);
+            }
+        } catch (error) {
+            toast.error(`error-${error}`);
+            setExcelFile(null);
+        }
     };
 
     const handleRemoveOption = (index) => {
@@ -428,32 +443,36 @@ const AddNewQuestionMaster = () => {
                     Back
                 </Button>
                 <h3 className="font-semibold md:text-xl">Add New</h3>
-                <div className="p-2 border border-black border-solid w-fit rounded-md">
-                    <div className="flex w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="picture" className="whitespace-nowrap">
-                            Question file upload
-                        </Label>
-                        <div>
-                            <Input
-                                id={`picture`}
-                                type="file"
-                                onChange={(e) => handleExcelFile(e)}
-                                name="file"
-                                className=""
-                                accept=".xls, .xlsx,"
-                            ></Input>
-                        </div>
-                        {excelsubmit && excelFile && (
-                            <Button
-                                onClick={hanldeFileUpload}
-                                className="bg-green-500 text-white px-4 py-2 mx-auto"
-                                type="button"
-                            >
-                                upload
-                            </Button>
-                        )}
+                {excelFileuploaded && (
+                    <div className="p-2 border border-black border-solid w-fit rounded-md">
+                        <form>
+                            <div className="flex w-full max-w-sm items-center gap-1.5">
+                                <Label htmlFor="picture" className="whitespace-nowrap">
+                                    Question file upload
+                                </Label>
+                                <div>
+                                    <Input
+                                        id={`picture`}
+                                        type="file"
+                                        onChange={(e) => handleExcelFile(e)}
+                                        name="file"
+                                        className=""
+                                        accept=".xls, .xlsx,"
+                                    ></Input>
+                                </div>
+                                {excelsubmit && excelFile && (
+                                    <Button
+                                        onClick={hanldeFileUpload}
+                                        className="bg-green-500 text-white px-4 py-2 mx-auto"
+                                        type="submit"
+                                    >
+                                        upload
+                                    </Button>
+                                )}
+                            </div>
+                        </form>
                     </div>
-                </div>
+                )}
 
                 <div className=" p-6 rounded-md w-full md:w-3/4 lg:w-full ">
                     {/* {questionNewData && ( */}
