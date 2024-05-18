@@ -1131,8 +1131,51 @@ export const UpdateExamMark = async (req, res) => {
       "UPDATE questionbankmst SET Mark = ? WHERE QuestionTestID = ?;",
       [data.Mark, data.QuestionTestID]
     );
-    console.log(result);
-    res.json(result[0]);
+    
+    if (result.length > 0) {
+        res.status(200).json({
+            data: [
+                {
+                    ActionType: "",
+                    ErrorMessage: "",
+                    ErrorCode: "",
+                    JSONData1: result,
+                    JSONData2: [],
+                    JSONData3: [],
+                    JSONData4: [],
+                    JSONData5: [],
+                    JSONData1Remarks: "",
+                    JSONData2Remarks: "",
+                    JSONData3Remarks: "",
+                    JSONData4Remarks: "",
+                    JSONData5Remarks: "",
+                },
+            ],
+            message: "successfull",
+            status: 200,
+        });
+    } else {
+        res.status(200).json({
+            data: [
+                {
+                    ActionType: "",
+                    ErrorMessage: "",
+                    ErrorCode: "",
+                    JSONData1: result,
+                    JSONData2: [],
+                    JSONData3: [],
+                    JSONData4: [],
+                    JSONData5: [],
+                    JSONData1Remarks: "",
+                    JSONData2Remarks: "",
+                    JSONData3Remarks: "",
+                    JSONData4Remarks: "",
+                    JSONData5Remarks: "",
+                },
+            ],
+            message: "no data found",
+        });
+    }
   } catch (error) {
     console.log(error);
   }
