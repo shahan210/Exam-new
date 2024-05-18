@@ -88,14 +88,6 @@ const Dashboard = () => {
             </div>{" "}
             <h3 className="xl:text-lg text-md font-semibold mb-2">Utility</h3>
           </div>
-          <div className="">
-            <a
-              className="bg-red-500 text-white font-semibold px-4 py-2 rounded"
-              href="/dashboard/exams"
-            >
-              Go to Exams
-            </a>
-          </div>
         </div>
       </div>
     </div>

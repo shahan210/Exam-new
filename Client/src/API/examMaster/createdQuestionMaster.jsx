@@ -8,6 +8,7 @@ const createdQuestionMaster = async (data) => {
             data: JSON.stringify(data),
             AddedBy: "snrdev",
         });
+        console.log(result);
         userData = result?.map((item) => item.JSONData1[0]);
         return userData;
     } catch (error) {
