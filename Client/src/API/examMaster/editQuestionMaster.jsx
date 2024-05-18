@@ -1,6 +1,6 @@
 import api from "../post.jsx";
 
-const getQuizMasterEditInfo = async (id) => {
+const rgetQuizMasterEditInfo = async (id) => {
     try {
         const result = await api.get(`/quesMasteredit/${id}`);
         return result;
