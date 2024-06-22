@@ -11,9 +11,10 @@ CREATE TABLE subjectsmaster (
     ExamID INT,
     IsActive VARCHAR(10) 
 );
+
 CREATE TABLE classmaster (
     ClassId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    ClAutoId INT AUTO_INCREMENT,
+    ClAutoId INT ,
     SLNo INT,
     QstClass VARCHAR(100),
     CLNAME VARCHAR(50),
@@ -24,6 +25,7 @@ CREATE TABLE classmaster (
     ModifiedBy VARCHAR(50),
     IsActive INT 
 );
+
 CREATE TABLE adminuserlogins (
     LoginID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     UserName VARCHAR(50) NOT NULL,
@@ -79,6 +81,7 @@ CREATE TABLE questionbankmst (
     QuestionTypeID INT DEFAULT 1,
     QuestionDesc01 VARCHAR(500),
     QuestionDesc02 VARCHAR(500),
+    Mark VARCHAR(50),
     Practical BOOLEAN,
     Remarks VARCHAR(500),
     Qalerts VARCHAR(500),
@@ -128,22 +131,24 @@ CREATE TABLE questionimages (
     ModifiedDate VARCHAR(20),
     ModifiedBy VARCHAR(50),
 )
+
 CREATE TABLE studentmaster (
     StudentID INT AUTO_INCREMENT PRIMARY KEY,
     STDMSTID INT,
     ADMNO VARCHAR(25),
     SNAME VARCHAR(100),
     FATHERNAME VARCHAR(100),
-    GENDER VARCHAR(10),
-    DOB VARCHAR(20),
-    DOA VARCHAR(20),
+    GENDER VARCHAR(50),
+    DOB VARCHAR(50),
+    DOA VARCHAR(50),
     SMSPHONE VARCHAR(50),
     ADDRESS VARCHAR(255),
     MNAME VARCHAR(150),
-    TCSTS VARCHAR(1),
+    TCSTS VARCHAR(10),
     PASSWORD VARCHAR(250),
-    VERCODE VARCHAR(10)
+    VERCODE VARCHAR(20)
 );
+
 CREATE TABLE studentyearmaster (
     StudentYearID INT AUTO_INCREMENT PRIMARY KEY,
     StudentID INT,
@@ -165,6 +170,7 @@ CREATE TABLE examstudentstatus (
     QuestionTestID INT,
     FinalSubmitYN INT
 );
+
 CREATE TABLE examquestionstatus (
     QBEXAMSTSID INT AUTO_INCREMENT PRIMARY KEY,
     QuestionBankID INT, 
