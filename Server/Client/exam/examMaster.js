@@ -921,18 +921,18 @@ export const UploadFileData = async (req, res) => {
   let questionData = {
     QuestionBankID: "",
     QuestionTestID: parseInt(examID),
-    QuestionGroupID: "",
-    QuestionGroupSLNO: "",
-    QuestionGroupType: "",
+    QuestionGroupID: 1,
+    QuestionGroupSLNO: 1,
+    QuestionGroupType: 1,
     ClassId: parseInt(classID),
     SubjectID: parseInt(subID),
-    ClassSubjectMasterId: "",
-    ChapterID: "",
-    QuestionTypeID: "",
+    ClassSubjectMasterId: 0,
+    ChapterID: 0,
+    QuestionTypeID: 0,
     QuestionDesc01: "",
     QuestionDesc02: "",
     Mark: "",
-    Practical: "",
+    Practical: 0,
     Remarks: "",
     Qalerts: "",
     Question1: "",
@@ -948,7 +948,7 @@ export const UploadFileData = async (req, res) => {
     Answer9: "",
     Answer10: "",
     RightAnswer: "",
-    IsActive: "",
+    IsActive: 0,
     AddedDate: "",
     AddedBy: "",
     ModifiedDate: "",
@@ -975,6 +975,7 @@ export const UploadFileData = async (req, res) => {
       RightAnswer: rightans,
       AddedDate: Adddate,
     };
+    console.log(data, "ques");
 
     const response = await pool.query(
       `INSERT INTO questionbankmst (

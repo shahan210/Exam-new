@@ -2,6 +2,7 @@ import pool from "../../Config/config.js";
 
 export const addQuestions = async (req, res) => {
   let questionDetails = req.body.data;
+  console.log(questionDetails, "hhhh--------------------------------------------------");
   const Adddate = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   const insertRowQuery =
@@ -24,10 +25,10 @@ export const addQuestions = async (req, res) => {
     0,
     student.QuestionBankID.toString() + student.StudentYearID.toString(),
   ]);
-  const getData = await pool.query(
-    "SELECT * FROM examquestionstatus  WHERE StudentID = ? AND QuestionBankID=?",
-    [questionDetails[0].StudentID, questionDetails[0].QuestionBankID]
-  );
+  const getData = await pool.query("SELECT * FROM examquestionstatus  WHERE StudentID = ? AND QuestionBankID = ?", [
+    questionDetails[0].StudentID,
+    questionDetails[0].QuestionBankID,
+  ]);
 
   try {
     if (getData[0]?.length > 0) {
@@ -52,17 +53,13 @@ export const addQuestions = async (req, res) => {
         message: "failed",
       });
     } else {
-      const result = await pool.query(
-        insertRowQuery,
-        [dataArray],
-        (error, results, fields) => {
-          if (error) {
-            console.error("Error inserting data:", error);
-            return;
-          }
-          console.log("Data inserted successfully:");
+      const result = await pool.query(insertRowQuery, [dataArray], (error, results, fields) => {
+        if (error) {
+          console.error("Error inserting data:", error);
+          return;
         }
-      );
+        console.log("Data inserted successfully:");
+      });
 
       if (result.length > 0) {
         res.status(200).json({
@@ -304,10 +301,10 @@ export const results = async (req, res) => {
   let data = req.body;
   console.log(data);
   try {
-    const result = await pool.query(
-      "SELECT * FROM examquestionstatus WHERE QuestionTestID = ? AND StudentID = ?; ",
-      [data.QuestionTestID, data.StudentID]
-    );
+    const result = await pool.query("SELECT * FROM examquestionstatus WHERE QuestionTestID = ? AND StudentID = ?; ", [
+      data.QuestionTestID,
+      data.StudentID,
+    ]);
     if (result.length > 0) {
       res.status(200).json({
         data: [
