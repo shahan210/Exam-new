@@ -1,4 +1,3 @@
-import React from "react";
 import api from "../post.jsx";
 
 const getStudentImport = async () => {

@@ -1,15 +1,13 @@
-import React from "react";
-import Layout from "../../global/components/Layout";
-import getStudentImport from "../../API/users/getStudentImport";
 import { toast } from "react-toastify";
+import getStudentImport from "../../API/users/getStudentImport";
+import Layout from "../../global/components/Layout";
 
 const Index = () => {
   const importStudents = async () => {
     try {
       const result = await getStudentImport();
-      console.log(result);
       if (result[0].insertId == undefined) {
-        return;
+        return toast.error("Something went wrong");
       }
       toast.success("Import data successfully");
     } catch (error) {

@@ -1,5 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import SubjectRoute from "./Router/Subject/Router.js";
 import ClassRoute from "./Router/Class/Router.js";
@@ -16,6 +18,9 @@ app.use(express.static("uploads"));
 
 const port = process.env.PORT || 5324;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(cors());
 connectToDatabase();
 app.use(express.json());
@@ -27,6 +32,11 @@ app.use("/api/v1/", ClassRoute);
 app.use("/api/v1/", UserRoute);
 app.use("/api/v1/", ExamRouter);
 app.use("/api/v2/", StudentRouter);
+
+app.get("/api/v1/download-excel", (req, res) => {
+  const file = path.resolve(__dirname, "../Server/uploads/blankQuestionModel.xlsx");
+  res.download(file); // Set disposition and send it.
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
